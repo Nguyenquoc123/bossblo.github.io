@@ -1,116 +1,10082 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Nguyễn Công Quốc - Trang cá nhân</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: #f4f4f4;
-      color: #333;
-    }
-
-    header {
-      background-color: #2c3e50;
-      color: white;
-      text-align: center;
-      padding: 40px 20px;
-    }
-
-    header h1 {
-      margin: 0;
-      font-size: 36px;
-    }
-
-    header p {
-      margin-top: 10px;
-      font-size: 18px;
-    }
-
-    .container {
-      max-width: 800px;
-      margin: 40px auto;
-      padding: 0 20px;
-      background-color: white;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-      border-radius: 10px;
-    }
-
-    .section {
-      padding: 20px;
-      border-bottom: 1px solid #ddd;
-    }
-
-    .section:last-child {
-      border-bottom: none;
-    }
-
-    h2 {
-      color: #2c3e50;
-      margin-bottom: 10px;
-    }
-
-    ul {
-      list-style-type: none;
-      padding: 0;
-    }
-
-    ul li {
-      padding: 5px 0;
-    }
-
-    a {
-      color: #3498db;
-      text-decoration: none;
-    }
-
-    a:hover {
-      text-decoration: underline;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>Học Từ Vựng</title>
+<style>
+    body { font-family: Arial; max-width: 500px; margin: auto; padding: 20px; }
+    h2 { text-align: center; }
+    .answer { padding: 10px; margin: 5px 0; background: #eee; cursor: pointer; border-radius: 5px; }
+    .answer.correct { background: lightgreen; }
+    .answer.wrong { background: salmon; }
+    #form { margin-top: 30px; border-top: 1px solid #ccc; padding-top: 20px; }
+    input { margin: 5px 0; width: 100%; padding: 5px; }
+    button { padding: 8px 15px; cursor: pointer; }
+</style>
 </head>
 <body>
 
-<header>
-  <h1>Nguyễn Công Quốc</h1>
-  <p>Sinh viên trường Đại học Khoa học Huế</p>
-</header>
-
-<div class="container">
-  <div class="section">
-    <h2>Giới thiệu bản thân</h2>
-    <p>Xin chào! Mình là Nguyễn Công Quốc, hiện đang là sinh viên trường Đại học Khoa học Huế. Mình có niềm đam mê với lập trình, đặc biệt là lập trình game. Ngoài việc học, mình thích xem phim và nghe nhạc.</p>
-  </div>
-
-  <div class="section">
-    <h2>Thông tin cá nhân</h2>
-    <ul>
-      <li><strong>Ngày sinh:</strong> 24/09/2004</li>
-      <li><strong>Số điện thoại:</strong> 0386022855</li>
-      <li><strong>Email:</strong> <a href="mailto:quoc4373@gmail.com">quoc4373@gmail.com</a></li>
-    </ul>
-  </div>
-
-  <div class="section">
-    <h2>Kỹ năng</h2>
-    <ul>
-      <li>Lập trình Java</li>
-      <li>Lập trình C++</li>
-      <li>Lập trình game (game 2D, Godot,...)</li>
-    </ul>
-  </div>
-
-  <div class="section">
-    <h2>Sở thích</h2>
-    <ul>
-      <li>Xem phim</li>
-      <li>Nghe nhạc</li>
-      <li>Lập trình game</li>
-    </ul>
-  </div>
+<h2>Học Từ Vựng</h2>
+<div id="quiz">
+    <h3 id="word"></h3>
+    <div id="answers"></div>
+    <button id="nextBtn" onclick="loadWord()">Từ tiếp theo</button>
 </div>
+
+<div id="form">
+    <h3>Thêm từ mới</h3>
+    <input id="en" placeholder="Từ tiếng Anh">
+    <input id="a" placeholder="Đáp án A (đúng)">
+    <input id="b" placeholder="Đáp án B">
+    <input id="c" placeholder="Đáp án C">
+    <input id="d" placeholder="Đáp án D">
+    <button onclick="addWord()">Thêm</button>
+</div>
+
+<script>
+    if(!localStorage.getItem("wordList")){
+        let word =  [
+    {
+        "en": "apple",
+        "answers": [
+            "đứa trẻ",
+            "quả táo",
+            "ngọn núi",
+            "con cá"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "banana",
+        "answers": [
+            "mưa",
+            "quả chuối",
+            "mặt trời",
+            "dòng sông"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "orange",
+        "answers": [
+            "quả cam",
+            "tàu hỏa",
+            "ngôi làng",
+            "nước"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "pear",
+        "answers": [
+            "quả lê",
+            "thức ăn",
+            "ngôi sao",
+            "giáo viên"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "dog",
+        "answers": [
+            "con chó",
+            "dòng sông",
+            "bài hát",
+            "quả lê"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "cat",
+        "answers": [
+            "con mèo",
+            "mặt trăng",
+            "đồ uống",
+            "ngôi sao"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "bird",
+        "answers": [
+            "bông hoa",
+            "con chim",
+            "dòng sông",
+            "con cá"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "fish",
+        "answers": [
+            "ngôi làng",
+            "con cá",
+            "ngôi sao",
+            "ngôi nhà"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "house",
+        "answers": [
+            "máy bay",
+            "ngôi nhà",
+            "nước",
+            "mặt trăng"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "car",
+        "answers": [
+            "âm nhạc",
+            "mặt trăng",
+            "đồ uống",
+            "xe hơi"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "book",
+        "answers": [
+            "giáo viên",
+            "thức ăn",
+            "quyển sách",
+            "đồ uống"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "pen",
+        "answers": [
+            "dòng sông",
+            "cây bút",
+            "ngôi sao",
+            "đứa trẻ"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "computer",
+        "answers": [
+            "con chim",
+            "dòng sông",
+            "mặt trăng",
+            "máy tính"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "phone",
+        "answers": [
+            "quyển sách",
+            "quả táo",
+            "đồ uống",
+            "điện thoại"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "water",
+        "answers": [
+            "quả chuối",
+            "nước",
+            "người đàn ông",
+            "con đường"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "fire",
+        "answers": [
+            "con tàu",
+            "lửa",
+            "bài hát",
+            "cái bàn"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "tree",
+        "answers": [
+            "cái cây",
+            "bầu trời",
+            "cây bút",
+            "giáo viên"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "flower",
+        "answers": [
+            "đồ uống",
+            "con cá",
+            "trường học",
+            "bông hoa"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "sun",
+        "answers": [
+            "mặt trăng",
+            "nước",
+            "mặt trời",
+            "tuyết"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "moon",
+        "answers": [
+            "mặt trăng",
+            "con cá",
+            "cái cây",
+            "đất nước"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "star",
+        "answers": [
+            "ngôi sao",
+            "trường học",
+            "bạn bè",
+            "máy tính"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "man",
+        "answers": [
+            "người đàn ông",
+            "cửa sổ",
+            "con chim",
+            "học sinh"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "woman",
+        "answers": [
+            "người phụ nữ",
+            "đứa trẻ",
+            "đồ uống",
+            "bầu trời"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "child",
+        "answers": [
+            "mặt trời",
+            "con cá",
+            "quả chuối",
+            "đứa trẻ"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "friend",
+        "answers": [
+            "bạn bè",
+            "đường phố",
+            "quả cam",
+            "con tàu"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "school",
+        "answers": [
+            "con mèo",
+            "ngôi sao",
+            "trường học",
+            "quả lê"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "teacher",
+        "answers": [
+            "con cá",
+            "con tàu",
+            "giáo viên",
+            "gió"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "student",
+        "answers": [
+            "quả cam",
+            "cây bút",
+            "học sinh",
+            "thức ăn"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "food",
+        "answers": [
+            "thức ăn",
+            "tuyết",
+            "con cá",
+            "bông hoa"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "drink",
+        "answers": [
+            "đồ uống",
+            "người phụ nữ",
+            "mặt trời",
+            "máy bay"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "music",
+        "answers": [
+            "âm nhạc",
+            "cây bút",
+            "đứa trẻ",
+            "ngôi làng"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "song",
+        "answers": [
+            "ngôi làng",
+            "quả lê",
+            "bài hát",
+            "cây bút"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "city",
+        "answers": [
+            "thành phố",
+            "cái ghế",
+            "giáo viên",
+            "tàu hỏa"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "village",
+        "answers": [
+            "ngôi làng",
+            "người đàn ông",
+            "cái ghế",
+            "con cá"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "country",
+        "answers": [
+            "đồ uống",
+            "đứa trẻ",
+            "đất nước",
+            "cánh cửa"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "river",
+        "answers": [
+            "dòng sông",
+            "mặt trăng",
+            "quyển sách",
+            "mưa"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "mountain",
+        "answers": [
+            "bài hát",
+            "tuyết",
+            "cái cây",
+            "ngọn núi"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "sea",
+        "answers": [
+            "học sinh",
+            "biển",
+            "đất nước",
+            "cái ghế"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "sky",
+        "answers": [
+            "tàu hỏa",
+            "bầu trời",
+            "con đường",
+            "cửa sổ"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "rain",
+        "answers": [
+            "mưa",
+            "bầu trời",
+            "đứa trẻ",
+            "quả lê"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "snow",
+        "answers": [
+            "cái cây",
+            "tuyết",
+            "đồ uống",
+            "tàu hỏa"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "wind",
+        "answers": [
+            "dòng sông",
+            "đứa trẻ",
+            "quả lê",
+            "gió"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "road",
+        "answers": [
+            "quả chuối",
+            "ngôi sao",
+            "mưa",
+            "con đường"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "street",
+        "answers": [
+            "đường phố",
+            "cái ghế",
+            "thành phố",
+            "đứa trẻ"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "train",
+        "answers": [
+            "điện thoại",
+            "âm nhạc",
+            "tàu hỏa",
+            "thức ăn"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "plane",
+        "answers": [
+            "mưa",
+            "ngôi làng",
+            "máy bay",
+            "lửa"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "ship",
+        "answers": [
+            "xe hơi",
+            "tàu hỏa",
+            "con mèo",
+            "con tàu"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "chair",
+        "answers": [
+            "con chó",
+            "học sinh",
+            "cái bàn",
+            "cái ghế"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "table",
+        "answers": [
+            "mặt trăng",
+            "cái bàn",
+            "mặt trời",
+            "đồ uống"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "door",
+        "answers": [
+            "biển",
+            "cánh cửa",
+            "ngôi sao",
+            "dòng sông"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "window",
+        "answers": [
+            "giáo viên",
+            "quả táo",
+            "cửa sổ",
+            "tàu hỏa"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "apple",
+        "answers": [
+            "âm nhạc",
+            "quả táo",
+            "điện thoại",
+            "bầu trời"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "banana",
+        "answers": [
+            "con tàu",
+            "quả chuối",
+            "quả lê",
+            "cánh cửa"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "orange",
+        "answers": [
+            "máy tính",
+            "tuyết",
+            "thức ăn",
+            "quả cam"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "pear",
+        "answers": [
+            "đứa trẻ",
+            "quả lê",
+            "cái ghế",
+            "giáo viên"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "dog",
+        "answers": [
+            "ngọn núi",
+            "thành phố",
+            "cánh cửa",
+            "con chó"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "cat",
+        "answers": [
+            "trường học",
+            "cái cây",
+            "con mèo",
+            "lửa"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "bird",
+        "answers": [
+            "dòng sông",
+            "con chim",
+            "đồ uống",
+            "ngọn núi"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "fish",
+        "answers": [
+            "con cá",
+            "tàu hỏa",
+            "học sinh",
+            "đồ uống"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "house",
+        "answers": [
+            "ngôi nhà",
+            "điện thoại",
+            "tàu hỏa",
+            "học sinh"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "car",
+        "answers": [
+            "xe hơi",
+            "con chó",
+            "bầu trời",
+            "thành phố"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "book",
+        "answers": [
+            "người đàn ông",
+            "cái bàn",
+            "máy tính",
+            "quyển sách"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "pen",
+        "answers": [
+            "đất nước",
+            "cửa sổ",
+            "mặt trời",
+            "cây bút"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "computer",
+        "answers": [
+            "máy tính",
+            "cây bút",
+            "quả lê",
+            "đường phố"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "phone",
+        "answers": [
+            "điện thoại",
+            "đứa trẻ",
+            "tàu hỏa",
+            "cây bút"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "water",
+        "answers": [
+            "nước",
+            "người đàn ông",
+            "học sinh",
+            "đồ uống"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "fire",
+        "answers": [
+            "quả cam",
+            "lửa",
+            "bạn bè",
+            "mặt trăng"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "tree",
+        "answers": [
+            "ngôi sao",
+            "cái cây",
+            "xe hơi",
+            "quả cam"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "flower",
+        "answers": [
+            "bông hoa",
+            "tuyết",
+            "lửa",
+            "biển"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "sun",
+        "answers": [
+            "cây bút",
+            "mặt trời",
+            "con mèo",
+            "dòng sông"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "moon",
+        "answers": [
+            "bông hoa",
+            "dòng sông",
+            "con chó",
+            "mặt trăng"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "star",
+        "answers": [
+            "ngôi sao",
+            "gió",
+            "âm nhạc",
+            "con chó"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "man",
+        "answers": [
+            "mặt trời",
+            "người đàn ông",
+            "con đường",
+            "cánh cửa"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "woman",
+        "answers": [
+            "người phụ nữ",
+            "thức ăn",
+            "quả lê",
+            "âm nhạc"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "child",
+        "answers": [
+            "đứa trẻ",
+            "gió",
+            "trường học",
+            "con cá"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "friend",
+        "answers": [
+            "mặt trăng",
+            "con chó",
+            "học sinh",
+            "bạn bè"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "school",
+        "answers": [
+            "quả cam",
+            "trường học",
+            "cửa sổ",
+            "con đường"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "teacher",
+        "answers": [
+            "con cá",
+            "giáo viên",
+            "cái ghế",
+            "đồ uống"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "student",
+        "answers": [
+            "học sinh",
+            "tàu hỏa",
+            "thức ăn",
+            "xe hơi"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "food",
+        "answers": [
+            "quả cam",
+            "thức ăn",
+            "người phụ nữ",
+            "gió"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "drink",
+        "answers": [
+            "quả cam",
+            "đồ uống",
+            "con chim",
+            "máy bay"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "music",
+        "answers": [
+            "con chim",
+            "âm nhạc",
+            "đường phố",
+            "con chó"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "song",
+        "answers": [
+            "ngôi sao",
+            "đường phố",
+            "bạn bè",
+            "bài hát"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "city",
+        "answers": [
+            "thành phố",
+            "điện thoại",
+            "quả lê",
+            "thức ăn"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "village",
+        "answers": [
+            "ngôi làng",
+            "bông hoa",
+            "con cá",
+            "giáo viên"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "country",
+        "answers": [
+            "con mèo",
+            "người phụ nữ",
+            "đứa trẻ",
+            "đất nước"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "river",
+        "answers": [
+            "cái cây",
+            "dòng sông",
+            "đồ uống",
+            "mặt trời"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "mountain",
+        "answers": [
+            "dòng sông",
+            "ngọn núi",
+            "bầu trời",
+            "quyển sách"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "sea",
+        "answers": [
+            "bạn bè",
+            "máy tính",
+            "lửa",
+            "biển"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "sky",
+        "answers": [
+            "tàu hỏa",
+            "ngôi nhà",
+            "bầu trời",
+            "mặt trăng"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "rain",
+        "answers": [
+            "mưa",
+            "cái bàn",
+            "cửa sổ",
+            "bầu trời"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "snow",
+        "answers": [
+            "ngọn núi",
+            "máy tính",
+            "tuyết",
+            "cánh cửa"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "wind",
+        "answers": [
+            "gió",
+            "ngọn núi",
+            "quả lê",
+            "mặt trời"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "road",
+        "answers": [
+            "cái cây",
+            "cái ghế",
+            "đứa trẻ",
+            "con đường"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "street",
+        "answers": [
+            "đường phố",
+            "đồ uống",
+            "gió",
+            "quả lê"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "train",
+        "answers": [
+            "quả lê",
+            "tàu hỏa",
+            "mặt trăng",
+            "tuyết"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "plane",
+        "answers": [
+            "con mèo",
+            "dòng sông",
+            "mặt trăng",
+            "máy bay"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "ship",
+        "answers": [
+            "thành phố",
+            "gió",
+            "thức ăn",
+            "con tàu"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "chair",
+        "answers": [
+            "âm nhạc",
+            "bài hát",
+            "bông hoa",
+            "cái ghế"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "table",
+        "answers": [
+            "lửa",
+            "cái bàn",
+            "quả táo",
+            "con chó"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "door",
+        "answers": [
+            "xe hơi",
+            "người đàn ông",
+            "cánh cửa",
+            "mặt trăng"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "window",
+        "answers": [
+            "dòng sông",
+            "con chó",
+            "đất nước",
+            "cửa sổ"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "apple",
+        "answers": [
+            "con đường",
+            "nước",
+            "quả táo",
+            "bầu trời"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "banana",
+        "answers": [
+            "bầu trời",
+            "quả chuối",
+            "biển",
+            "đường phố"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "orange",
+        "answers": [
+            "trường học",
+            "quả cam",
+            "đất nước",
+            "tuyết"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "pear",
+        "answers": [
+            "quả lê",
+            "con chim",
+            "thức ăn",
+            "thành phố"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "dog",
+        "answers": [
+            "quả cam",
+            "con chó",
+            "đồ uống",
+            "con đường"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "cat",
+        "answers": [
+            "xe hơi",
+            "con mèo",
+            "quyển sách",
+            "bông hoa"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "bird",
+        "answers": [
+            "đứa trẻ",
+            "lửa",
+            "con chim",
+            "máy bay"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "fish",
+        "answers": [
+            "con cá",
+            "con mèo",
+            "lửa",
+            "ngọn núi"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "house",
+        "answers": [
+            "âm nhạc",
+            "quả cam",
+            "lửa",
+            "ngôi nhà"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "car",
+        "answers": [
+            "gió",
+            "bạn bè",
+            "tàu hỏa",
+            "xe hơi"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "book",
+        "answers": [
+            "cái ghế",
+            "bầu trời",
+            "quyển sách",
+            "âm nhạc"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "pen",
+        "answers": [
+            "mưa",
+            "bài hát",
+            "cây bút",
+            "xe hơi"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "computer",
+        "answers": [
+            "mặt trời",
+            "con chim",
+            "giáo viên",
+            "máy tính"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "phone",
+        "answers": [
+            "người phụ nữ",
+            "tàu hỏa",
+            "con tàu",
+            "điện thoại"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "water",
+        "answers": [
+            "mặt trăng",
+            "ngọn núi",
+            "nước",
+            "trường học"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "fire",
+        "answers": [
+            "lửa",
+            "tuyết",
+            "cây bút",
+            "con tàu"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "tree",
+        "answers": [
+            "ngôi sao",
+            "cái cây",
+            "đường phố",
+            "quả táo"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "flower",
+        "answers": [
+            "thành phố",
+            "bông hoa",
+            "học sinh",
+            "máy bay"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "sun",
+        "answers": [
+            "điện thoại",
+            "thành phố",
+            "mặt trời",
+            "nước"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "moon",
+        "answers": [
+            "mặt trăng",
+            "con chó",
+            "cái cây",
+            "con mèo"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "star",
+        "answers": [
+            "cái bàn",
+            "điện thoại",
+            "ngôi sao",
+            "mặt trăng"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "man",
+        "answers": [
+            "người đàn ông",
+            "đất nước",
+            "âm nhạc",
+            "đường phố"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "woman",
+        "answers": [
+            "người phụ nữ",
+            "cánh cửa",
+            "trường học",
+            "quả táo"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "child",
+        "answers": [
+            "người phụ nữ",
+            "đứa trẻ",
+            "quả táo",
+            "thức ăn"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "friend",
+        "answers": [
+            "bạn bè",
+            "thức ăn",
+            "quả táo",
+            "đồ uống"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "school",
+        "answers": [
+            "trường học",
+            "gió",
+            "học sinh",
+            "cái cây"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "teacher",
+        "answers": [
+            "giáo viên",
+            "ngôi nhà",
+            "người đàn ông",
+            "quả táo"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "student",
+        "answers": [
+            "cái bàn",
+            "cửa sổ",
+            "học sinh",
+            "quyển sách"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "food",
+        "answers": [
+            "quả chuối",
+            "đứa trẻ",
+            "thức ăn",
+            "âm nhạc"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "drink",
+        "answers": [
+            "mặt trăng",
+            "đồ uống",
+            "trường học",
+            "giáo viên"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "music",
+        "answers": [
+            "bạn bè",
+            "tuyết",
+            "bông hoa",
+            "âm nhạc"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "song",
+        "answers": [
+            "điện thoại",
+            "bài hát",
+            "bông hoa",
+            "lửa"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "city",
+        "answers": [
+            "giáo viên",
+            "mưa",
+            "thành phố",
+            "gió"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "village",
+        "answers": [
+            "cái ghế",
+            "ngôi làng",
+            "máy tính",
+            "con chim"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "country",
+        "answers": [
+            "âm nhạc",
+            "thức ăn",
+            "con chim",
+            "đất nước"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "river",
+        "answers": [
+            "người đàn ông",
+            "con tàu",
+            "bạn bè",
+            "dòng sông"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "mountain",
+        "answers": [
+            "cái cây",
+            "thành phố",
+            "giáo viên",
+            "ngọn núi"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "sea",
+        "answers": [
+            "biển",
+            "con chó",
+            "thức ăn",
+            "quả cam"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "sky",
+        "answers": [
+            "điện thoại",
+            "con chó",
+            "cánh cửa",
+            "bầu trời"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "rain",
+        "answers": [
+            "đường phố",
+            "dòng sông",
+            "âm nhạc",
+            "mưa"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "snow",
+        "answers": [
+            "xe hơi",
+            "tuyết",
+            "mặt trời",
+            "quả chuối"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "wind",
+        "answers": [
+            "quả lê",
+            "ngôi sao",
+            "gió",
+            "lửa"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "road",
+        "answers": [
+            "cái ghế",
+            "cửa sổ",
+            "con đường",
+            "ngôi nhà"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "street",
+        "answers": [
+            "đường phố",
+            "bông hoa",
+            "trường học",
+            "quả lê"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "train",
+        "answers": [
+            "con cá",
+            "bài hát",
+            "người đàn ông",
+            "tàu hỏa"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "plane",
+        "answers": [
+            "đất nước",
+            "quả chuối",
+            "máy bay",
+            "con chim"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "ship",
+        "answers": [
+            "ngôi sao",
+            "quả lê",
+            "con tàu",
+            "quyển sách"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "chair",
+        "answers": [
+            "người đàn ông",
+            "bông hoa",
+            "cái ghế",
+            "máy bay"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "table",
+        "answers": [
+            "cái bàn",
+            "giáo viên",
+            "bầu trời",
+            "máy tính"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "door",
+        "answers": [
+            "ngọn núi",
+            "cánh cửa",
+            "nước",
+            "quả táo"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "window",
+        "answers": [
+            "bạn bè",
+            "trường học",
+            "con đường",
+            "cửa sổ"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "apple",
+        "answers": [
+            "quả cam",
+            "quả táo",
+            "người phụ nữ",
+            "cái bàn"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "banana",
+        "answers": [
+            "quyển sách",
+            "quả chuối",
+            "ngôi làng",
+            "người phụ nữ"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "orange",
+        "answers": [
+            "bạn bè",
+            "nước",
+            "mặt trăng",
+            "quả cam"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "pear",
+        "answers": [
+            "đất nước",
+            "quả lê",
+            "giáo viên",
+            "máy tính"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "dog",
+        "answers": [
+            "con đường",
+            "quả lê",
+            "con chó",
+            "bông hoa"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "cat",
+        "answers": [
+            "bầu trời",
+            "cây bút",
+            "con mèo",
+            "ngôi làng"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "bird",
+        "answers": [
+            "cửa sổ",
+            "điện thoại",
+            "giáo viên",
+            "con chim"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "fish",
+        "answers": [
+            "đường phố",
+            "con cá",
+            "cửa sổ",
+            "giáo viên"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "house",
+        "answers": [
+            "ngôi nhà",
+            "máy bay",
+            "gió",
+            "con mèo"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "car",
+        "answers": [
+            "cái ghế",
+            "đồ uống",
+            "thức ăn",
+            "xe hơi"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "book",
+        "answers": [
+            "quả lê",
+            "quyển sách",
+            "cái ghế",
+            "con đường"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "pen",
+        "answers": [
+            "ngôi sao",
+            "cái bàn",
+            "đất nước",
+            "cây bút"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "computer",
+        "answers": [
+            "đất nước",
+            "xe hơi",
+            "bạn bè",
+            "máy tính"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "phone",
+        "answers": [
+            "quả chuối",
+            "trường học",
+            "quả cam",
+            "điện thoại"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "water",
+        "answers": [
+            "con chó",
+            "đứa trẻ",
+            "tàu hỏa",
+            "nước"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "fire",
+        "answers": [
+            "bầu trời",
+            "lửa",
+            "cái cây",
+            "con mèo"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "tree",
+        "answers": [
+            "cánh cửa",
+            "ngọn núi",
+            "cái cây",
+            "quả lê"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "flower",
+        "answers": [
+            "đường phố",
+            "bông hoa",
+            "ngôi nhà",
+            "con tàu"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "sun",
+        "answers": [
+            "đường phố",
+            "mặt trời",
+            "đứa trẻ",
+            "giáo viên"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "moon",
+        "answers": [
+            "ngôi làng",
+            "tuyết",
+            "mặt trăng",
+            "con chó"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "star",
+        "answers": [
+            "ngôi sao",
+            "cái ghế",
+            "mặt trời",
+            "bông hoa"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "man",
+        "answers": [
+            "con chim",
+            "người đàn ông",
+            "lửa",
+            "cửa sổ"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "woman",
+        "answers": [
+            "người phụ nữ",
+            "cây bút",
+            "đường phố",
+            "thức ăn"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "child",
+        "answers": [
+            "mặt trời",
+            "cái ghế",
+            "giáo viên",
+            "đứa trẻ"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "friend",
+        "answers": [
+            "bạn bè",
+            "ngôi sao",
+            "điện thoại",
+            "con mèo"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "school",
+        "answers": [
+            "tàu hỏa",
+            "bài hát",
+            "thức ăn",
+            "trường học"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "teacher",
+        "answers": [
+            "ngôi sao",
+            "giáo viên",
+            "quả chuối",
+            "đường phố"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "student",
+        "answers": [
+            "học sinh",
+            "con mèo",
+            "tuyết",
+            "quả cam"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "food",
+        "answers": [
+            "quả lê",
+            "cái ghế",
+            "máy tính",
+            "thức ăn"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "drink",
+        "answers": [
+            "biển",
+            "đồ uống",
+            "con cá",
+            "âm nhạc"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "music",
+        "answers": [
+            "điện thoại",
+            "ngôi nhà",
+            "âm nhạc",
+            "đất nước"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "song",
+        "answers": [
+            "tàu hỏa",
+            "mặt trăng",
+            "người phụ nữ",
+            "bài hát"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "city",
+        "answers": [
+            "người đàn ông",
+            "thành phố",
+            "máy bay",
+            "máy tính"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "village",
+        "answers": [
+            "cái ghế",
+            "dòng sông",
+            "ngôi làng",
+            "người phụ nữ"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "country",
+        "answers": [
+            "thức ăn",
+            "con tàu",
+            "con chó",
+            "đất nước"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "river",
+        "answers": [
+            "ngôi sao",
+            "biển",
+            "dòng sông",
+            "âm nhạc"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "mountain",
+        "answers": [
+            "máy bay",
+            "cái bàn",
+            "ngọn núi",
+            "cửa sổ"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "sea",
+        "answers": [
+            "biển",
+            "giáo viên",
+            "dòng sông",
+            "gió"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "sky",
+        "answers": [
+            "quả cam",
+            "bầu trời",
+            "đất nước",
+            "trường học"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "rain",
+        "answers": [
+            "bầu trời",
+            "mưa",
+            "gió",
+            "học sinh"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "snow",
+        "answers": [
+            "tuyết",
+            "mặt trăng",
+            "bạn bè",
+            "con chim"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "wind",
+        "answers": [
+            "máy tính",
+            "mặt trời",
+            "gió",
+            "người phụ nữ"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "road",
+        "answers": [
+            "âm nhạc",
+            "thành phố",
+            "biển",
+            "con đường"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "street",
+        "answers": [
+            "máy bay",
+            "ngôi sao",
+            "con đường",
+            "đường phố"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "train",
+        "answers": [
+            "cái bàn",
+            "con đường",
+            "trường học",
+            "tàu hỏa"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "plane",
+        "answers": [
+            "máy bay",
+            "bạn bè",
+            "ngôi làng",
+            "xe hơi"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "ship",
+        "answers": [
+            "cánh cửa",
+            "mặt trăng",
+            "đất nước",
+            "con tàu"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "chair",
+        "answers": [
+            "người đàn ông",
+            "cái ghế",
+            "tàu hỏa",
+            "quả lê"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "table",
+        "answers": [
+            "cái bàn",
+            "mưa",
+            "quyển sách",
+            "cái cây"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "door",
+        "answers": [
+            "bầu trời",
+            "mặt trăng",
+            "đồ uống",
+            "cánh cửa"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "window",
+        "answers": [
+            "ngọn núi",
+            "cửa sổ",
+            "giáo viên",
+            "máy tính"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "apple",
+        "answers": [
+            "tuyết",
+            "quả táo",
+            "bầu trời",
+            "thành phố"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "banana",
+        "answers": [
+            "trường học",
+            "bài hát",
+            "điện thoại",
+            "quả chuối"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "orange",
+        "answers": [
+            "mặt trăng",
+            "máy bay",
+            "cái bàn",
+            "quả cam"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "pear",
+        "answers": [
+            "quả lê",
+            "ngôi nhà",
+            "đứa trẻ",
+            "giáo viên"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "dog",
+        "answers": [
+            "con chó",
+            "tàu hỏa",
+            "người đàn ông",
+            "ngôi nhà"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "cat",
+        "answers": [
+            "biển",
+            "bạn bè",
+            "con đường",
+            "con mèo"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "bird",
+        "answers": [
+            "đường phố",
+            "đồ uống",
+            "con chó",
+            "con chim"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "fish",
+        "answers": [
+            "cái cây",
+            "thức ăn",
+            "con cá",
+            "quyển sách"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "house",
+        "answers": [
+            "trường học",
+            "ngôi nhà",
+            "nước",
+            "cái cây"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "car",
+        "answers": [
+            "trường học",
+            "xe hơi",
+            "cánh cửa",
+            "quả cam"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "book",
+        "answers": [
+            "đất nước",
+            "con cá",
+            "âm nhạc",
+            "quyển sách"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "pen",
+        "answers": [
+            "cây bút",
+            "nước",
+            "cái ghế",
+            "biển"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "computer",
+        "answers": [
+            "tàu hỏa",
+            "cái cây",
+            "máy tính",
+            "đường phố"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "phone",
+        "answers": [
+            "điện thoại",
+            "mưa",
+            "quyển sách",
+            "con chó"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "water",
+        "answers": [
+            "cánh cửa",
+            "nước",
+            "cái ghế",
+            "âm nhạc"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "fire",
+        "answers": [
+            "nước",
+            "cái cây",
+            "bông hoa",
+            "lửa"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "tree",
+        "answers": [
+            "cửa sổ",
+            "ngôi sao",
+            "con tàu",
+            "cái cây"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "flower",
+        "answers": [
+            "đồ uống",
+            "con tàu",
+            "bông hoa",
+            "biển"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "sun",
+        "answers": [
+            "cái ghế",
+            "đường phố",
+            "mặt trời",
+            "con chó"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "moon",
+        "answers": [
+            "ngôi làng",
+            "xe hơi",
+            "mặt trăng",
+            "quả lê"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "star",
+        "answers": [
+            "máy tính",
+            "quả cam",
+            "con chim",
+            "ngôi sao"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "man",
+        "answers": [
+            "nước",
+            "người đàn ông",
+            "đất nước",
+            "cái bàn"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "woman",
+        "answers": [
+            "dòng sông",
+            "trường học",
+            "bầu trời",
+            "người phụ nữ"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "child",
+        "answers": [
+            "đứa trẻ",
+            "trường học",
+            "cửa sổ",
+            "thức ăn"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "friend",
+        "answers": [
+            "cái ghế",
+            "bạn bè",
+            "con tàu",
+            "đất nước"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "school",
+        "answers": [
+            "mặt trăng",
+            "trường học",
+            "thành phố",
+            "con đường"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "teacher",
+        "answers": [
+            "máy tính",
+            "giáo viên",
+            "điện thoại",
+            "cánh cửa"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "student",
+        "answers": [
+            "con mèo",
+            "học sinh",
+            "bông hoa",
+            "tuyết"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "food",
+        "answers": [
+            "âm nhạc",
+            "thức ăn",
+            "cái bàn",
+            "đất nước"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "drink",
+        "answers": [
+            "đồ uống",
+            "con chó",
+            "mưa",
+            "quả lê"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "music",
+        "answers": [
+            "âm nhạc",
+            "nước",
+            "học sinh",
+            "lửa"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "song",
+        "answers": [
+            "cửa sổ",
+            "bài hát",
+            "người đàn ông",
+            "con mèo"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "city",
+        "answers": [
+            "ngôi làng",
+            "mưa",
+            "đứa trẻ",
+            "thành phố"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "village",
+        "answers": [
+            "đồ uống",
+            "ngôi làng",
+            "cửa sổ",
+            "ngọn núi"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "country",
+        "answers": [
+            "đất nước",
+            "mặt trăng",
+            "ngọn núi",
+            "cây bút"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "river",
+        "answers": [
+            "tàu hỏa",
+            "học sinh",
+            "gió",
+            "dòng sông"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "mountain",
+        "answers": [
+            "ngọn núi",
+            "cửa sổ",
+            "nước",
+            "cánh cửa"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "sea",
+        "answers": [
+            "trường học",
+            "mặt trăng",
+            "đường phố",
+            "biển"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "sky",
+        "answers": [
+            "tuyết",
+            "ngôi sao",
+            "bầu trời",
+            "quả chuối"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "rain",
+        "answers": [
+            "thức ăn",
+            "biển",
+            "mưa",
+            "bạn bè"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "snow",
+        "answers": [
+            "con chó",
+            "tuyết",
+            "xe hơi",
+            "điện thoại"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "wind",
+        "answers": [
+            "cánh cửa",
+            "quả chuối",
+            "tuyết",
+            "gió"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "road",
+        "answers": [
+            "học sinh",
+            "con đường",
+            "đất nước",
+            "tàu hỏa"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "street",
+        "answers": [
+            "đường phố",
+            "máy bay",
+            "ngôi nhà",
+            "con đường"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "train",
+        "answers": [
+            "dòng sông",
+            "tàu hỏa",
+            "cánh cửa",
+            "con tàu"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "plane",
+        "answers": [
+            "máy bay",
+            "đường phố",
+            "cánh cửa",
+            "quyển sách"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "ship",
+        "answers": [
+            "con tàu",
+            "con đường",
+            "quả cam",
+            "bầu trời"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "chair",
+        "answers": [
+            "bầu trời",
+            "người đàn ông",
+            "cái ghế",
+            "ngôi sao"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "table",
+        "answers": [
+            "đất nước",
+            "cái bàn",
+            "thành phố",
+            "âm nhạc"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "door",
+        "answers": [
+            "cánh cửa",
+            "đứa trẻ",
+            "giáo viên",
+            "lửa"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "window",
+        "answers": [
+            "mặt trăng",
+            "cửa sổ",
+            "điện thoại",
+            "quả táo"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "apple",
+        "answers": [
+            "quả lê",
+            "quả táo",
+            "dòng sông",
+            "thức ăn"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "banana",
+        "answers": [
+            "xe hơi",
+            "cái ghế",
+            "quả chuối",
+            "con mèo"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "orange",
+        "answers": [
+            "con mèo",
+            "điện thoại",
+            "quả cam",
+            "đường phố"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "pear",
+        "answers": [
+            "quả lê",
+            "ngôi sao",
+            "học sinh",
+            "bông hoa"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "dog",
+        "answers": [
+            "con chó",
+            "mặt trăng",
+            "con chim",
+            "cái cây"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "cat",
+        "answers": [
+            "con mèo",
+            "học sinh",
+            "ngôi sao",
+            "quả lê"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "bird",
+        "answers": [
+            "gió",
+            "cây bút",
+            "quả táo",
+            "con chim"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "fish",
+        "answers": [
+            "ngọn núi",
+            "bài hát",
+            "ngôi làng",
+            "con cá"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "house",
+        "answers": [
+            "học sinh",
+            "gió",
+            "ngôi nhà",
+            "tuyết"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "car",
+        "answers": [
+            "nước",
+            "ngôi sao",
+            "con mèo",
+            "xe hơi"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "book",
+        "answers": [
+            "dòng sông",
+            "quyển sách",
+            "máy tính",
+            "thức ăn"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "pen",
+        "answers": [
+            "âm nhạc",
+            "cây bút",
+            "đất nước",
+            "con đường"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "computer",
+        "answers": [
+            "máy tính",
+            "trường học",
+            "quả lê",
+            "bông hoa"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "phone",
+        "answers": [
+            "con mèo",
+            "lửa",
+            "quả cam",
+            "điện thoại"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "water",
+        "answers": [
+            "quyển sách",
+            "cái bàn",
+            "quả lê",
+            "nước"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "fire",
+        "answers": [
+            "lửa",
+            "con đường",
+            "ngọn núi",
+            "ngôi làng"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "tree",
+        "answers": [
+            "cái cây",
+            "gió",
+            "dòng sông",
+            "cửa sổ"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "flower",
+        "answers": [
+            "bài hát",
+            "bông hoa",
+            "người phụ nữ",
+            "quả chuối"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "sun",
+        "answers": [
+            "quyển sách",
+            "cái ghế",
+            "bạn bè",
+            "mặt trời"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "moon",
+        "answers": [
+            "mặt trăng",
+            "quả chuối",
+            "quả lê",
+            "âm nhạc"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "star",
+        "answers": [
+            "ngôi sao",
+            "con mèo",
+            "quyển sách",
+            "đường phố"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "man",
+        "answers": [
+            "con chó",
+            "người đàn ông",
+            "cây bút",
+            "đứa trẻ"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "woman",
+        "answers": [
+            "trường học",
+            "người phụ nữ",
+            "đồ uống",
+            "quả cam"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "child",
+        "answers": [
+            "gió",
+            "đứa trẻ",
+            "mặt trời",
+            "quả cam"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "friend",
+        "answers": [
+            "con chó",
+            "cây bút",
+            "quả lê",
+            "bạn bè"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "school",
+        "answers": [
+            "mặt trời",
+            "ngôi nhà",
+            "đứa trẻ",
+            "trường học"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "teacher",
+        "answers": [
+            "giáo viên",
+            "quả lê",
+            "ngọn núi",
+            "bông hoa"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "student",
+        "answers": [
+            "quyển sách",
+            "đường phố",
+            "học sinh",
+            "thức ăn"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "food",
+        "answers": [
+            "điện thoại",
+            "bài hát",
+            "trường học",
+            "thức ăn"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "drink",
+        "answers": [
+            "gió",
+            "đồ uống",
+            "người phụ nữ",
+            "âm nhạc"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "music",
+        "answers": [
+            "máy bay",
+            "gió",
+            "biển",
+            "âm nhạc"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "song",
+        "answers": [
+            "bông hoa",
+            "con chim",
+            "bài hát",
+            "đường phố"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "city",
+        "answers": [
+            "bài hát",
+            "thành phố",
+            "con mèo",
+            "bông hoa"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "village",
+        "answers": [
+            "bầu trời",
+            "ngôi làng",
+            "biển",
+            "quyển sách"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "country",
+        "answers": [
+            "con mèo",
+            "thành phố",
+            "quyển sách",
+            "đất nước"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "river",
+        "answers": [
+            "thức ăn",
+            "dòng sông",
+            "con mèo",
+            "người đàn ông"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "mountain",
+        "answers": [
+            "ngọn núi",
+            "tuyết",
+            "bài hát",
+            "dòng sông"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "sea",
+        "answers": [
+            "dòng sông",
+            "cái cây",
+            "biển",
+            "thành phố"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "sky",
+        "answers": [
+            "bầu trời",
+            "tàu hỏa",
+            "mưa",
+            "máy tính"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "rain",
+        "answers": [
+            "trường học",
+            "mưa",
+            "quả cam",
+            "mặt trời"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "snow",
+        "answers": [
+            "bài hát",
+            "biển",
+            "xe hơi",
+            "tuyết"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "wind",
+        "answers": [
+            "thức ăn",
+            "gió",
+            "tuyết",
+            "mặt trăng"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "road",
+        "answers": [
+            "lửa",
+            "đất nước",
+            "quả chuối",
+            "con đường"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "street",
+        "answers": [
+            "giáo viên",
+            "trường học",
+            "đường phố",
+            "tuyết"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "train",
+        "answers": [
+            "quả lê",
+            "bạn bè",
+            "học sinh",
+            "tàu hỏa"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "plane",
+        "answers": [
+            "mưa",
+            "máy tính",
+            "bầu trời",
+            "máy bay"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "ship",
+        "answers": [
+            "con tàu",
+            "học sinh",
+            "cái cây",
+            "cây bút"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "chair",
+        "answers": [
+            "cái bàn",
+            "tàu hỏa",
+            "cái ghế",
+            "quả cam"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "table",
+        "answers": [
+            "đất nước",
+            "học sinh",
+            "quả lê",
+            "cái bàn"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "door",
+        "answers": [
+            "con tàu",
+            "điện thoại",
+            "cánh cửa",
+            "mưa"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "window",
+        "answers": [
+            "cửa sổ",
+            "đất nước",
+            "con chim",
+            "ngôi nhà"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "apple",
+        "answers": [
+            "thức ăn",
+            "quả táo",
+            "con cá",
+            "bạn bè"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "banana",
+        "answers": [
+            "tuyết",
+            "quả chuối",
+            "xe hơi",
+            "cây bút"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "orange",
+        "answers": [
+            "tàu hỏa",
+            "cái bàn",
+            "cửa sổ",
+            "quả cam"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "pear",
+        "answers": [
+            "gió",
+            "lửa",
+            "con mèo",
+            "quả lê"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "dog",
+        "answers": [
+            "âm nhạc",
+            "quả táo",
+            "mặt trăng",
+            "con chó"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "cat",
+        "answers": [
+            "con chó",
+            "quả táo",
+            "con mèo",
+            "bài hát"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "bird",
+        "answers": [
+            "tàu hỏa",
+            "con chim",
+            "thành phố",
+            "ngôi làng"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "fish",
+        "answers": [
+            "ngọn núi",
+            "con cá",
+            "người đàn ông",
+            "xe hơi"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "house",
+        "answers": [
+            "ngôi nhà",
+            "con đường",
+            "lửa",
+            "mưa"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "car",
+        "answers": [
+            "trường học",
+            "tuyết",
+            "đứa trẻ",
+            "xe hơi"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "book",
+        "answers": [
+            "quyển sách",
+            "cửa sổ",
+            "quả cam",
+            "mặt trăng"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "pen",
+        "answers": [
+            "cây bút",
+            "ngôi làng",
+            "thành phố",
+            "bông hoa"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "computer",
+        "answers": [
+            "máy tính",
+            "tàu hỏa",
+            "thành phố",
+            "học sinh"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "phone",
+        "answers": [
+            "điện thoại",
+            "trường học",
+            "học sinh",
+            "tàu hỏa"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "water",
+        "answers": [
+            "nước",
+            "trường học",
+            "âm nhạc",
+            "máy tính"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "fire",
+        "answers": [
+            "cái ghế",
+            "ngôi làng",
+            "quả chuối",
+            "lửa"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "tree",
+        "answers": [
+            "con mèo",
+            "học sinh",
+            "con cá",
+            "cái cây"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "flower",
+        "answers": [
+            "thức ăn",
+            "bông hoa",
+            "quyển sách",
+            "quả cam"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "sun",
+        "answers": [
+            "âm nhạc",
+            "tàu hỏa",
+            "mặt trời",
+            "xe hơi"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "moon",
+        "answers": [
+            "mưa",
+            "mặt trăng",
+            "con chim",
+            "con cá"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "star",
+        "answers": [
+            "cái bàn",
+            "ngôi sao",
+            "âm nhạc",
+            "nước"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "man",
+        "answers": [
+            "quả cam",
+            "người đàn ông",
+            "thành phố",
+            "bài hát"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "woman",
+        "answers": [
+            "cửa sổ",
+            "người phụ nữ",
+            "người đàn ông",
+            "bạn bè"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "child",
+        "answers": [
+            "người đàn ông",
+            "ngôi sao",
+            "đứa trẻ",
+            "thức ăn"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "friend",
+        "answers": [
+            "bạn bè",
+            "máy bay",
+            "điện thoại",
+            "biển"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "school",
+        "answers": [
+            "người phụ nữ",
+            "trường học",
+            "thức ăn",
+            "tuyết"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "teacher",
+        "answers": [
+            "học sinh",
+            "ngôi làng",
+            "cái cây",
+            "giáo viên"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "student",
+        "answers": [
+            "học sinh",
+            "thành phố",
+            "tuyết",
+            "quyển sách"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "food",
+        "answers": [
+            "máy tính",
+            "bông hoa",
+            "đồ uống",
+            "thức ăn"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "drink",
+        "answers": [
+            "con chó",
+            "đồ uống",
+            "người phụ nữ",
+            "lửa"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "music",
+        "answers": [
+            "máy tính",
+            "học sinh",
+            "ngôi nhà",
+            "âm nhạc"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "song",
+        "answers": [
+            "con chó",
+            "bài hát",
+            "con cá",
+            "đường phố"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "city",
+        "answers": [
+            "cái ghế",
+            "quả lê",
+            "thành phố",
+            "ngôi làng"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "village",
+        "answers": [
+            "mặt trời",
+            "trường học",
+            "ngôi làng",
+            "con chó"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "country",
+        "answers": [
+            "người phụ nữ",
+            "bông hoa",
+            "đất nước",
+            "quả cam"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "river",
+        "answers": [
+            "giáo viên",
+            "mặt trời",
+            "dòng sông",
+            "quả lê"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "mountain",
+        "answers": [
+            "người đàn ông",
+            "giáo viên",
+            "con đường",
+            "ngọn núi"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "sea",
+        "answers": [
+            "xe hơi",
+            "biển",
+            "dòng sông",
+            "con chó"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "sky",
+        "answers": [
+            "bầu trời",
+            "con cá",
+            "cái bàn",
+            "mặt trời"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "rain",
+        "answers": [
+            "cái ghế",
+            "đường phố",
+            "quả lê",
+            "mưa"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "snow",
+        "answers": [
+            "máy tính",
+            "đất nước",
+            "tuyết",
+            "cửa sổ"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "wind",
+        "answers": [
+            "máy tính",
+            "gió",
+            "bài hát",
+            "quả táo"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "road",
+        "answers": [
+            "âm nhạc",
+            "cánh cửa",
+            "con đường",
+            "đất nước"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "street",
+        "answers": [
+            "quả cam",
+            "đường phố",
+            "đất nước",
+            "con mèo"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "train",
+        "answers": [
+            "cây bút",
+            "nước",
+            "con tàu",
+            "tàu hỏa"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "plane",
+        "answers": [
+            "đất nước",
+            "máy bay",
+            "con tàu",
+            "cái ghế"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "ship",
+        "answers": [
+            "con tàu",
+            "con đường",
+            "bầu trời",
+            "gió"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "chair",
+        "answers": [
+            "ngôi làng",
+            "cái ghế",
+            "cánh cửa",
+            "con tàu"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "table",
+        "answers": [
+            "cửa sổ",
+            "bài hát",
+            "tàu hỏa",
+            "cái bàn"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "door",
+        "answers": [
+            "cánh cửa",
+            "giáo viên",
+            "cái ghế",
+            "âm nhạc"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "window",
+        "answers": [
+            "ngôi làng",
+            "cửa sổ",
+            "học sinh",
+            "ngọn núi"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "apple",
+        "answers": [
+            "quả táo",
+            "con đường",
+            "con tàu",
+            "cánh cửa"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "banana",
+        "answers": [
+            "ngôi nhà",
+            "quả chuối",
+            "người phụ nữ",
+            "ngôi sao"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "orange",
+        "answers": [
+            "đất nước",
+            "quả cam",
+            "cái cây",
+            "cái bàn"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "pear",
+        "answers": [
+            "quyển sách",
+            "đồ uống",
+            "cây bút",
+            "quả lê"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "dog",
+        "answers": [
+            "học sinh",
+            "nước",
+            "con chó",
+            "ngôi nhà"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "cat",
+        "answers": [
+            "ngôi sao",
+            "mặt trăng",
+            "con mèo",
+            "người phụ nữ"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "bird",
+        "answers": [
+            "ngôi làng",
+            "bài hát",
+            "điện thoại",
+            "con chim"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "fish",
+        "answers": [
+            "con cá",
+            "con chim",
+            "tuyết",
+            "đồ uống"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "house",
+        "answers": [
+            "nước",
+            "mặt trăng",
+            "con cá",
+            "ngôi nhà"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "car",
+        "answers": [
+            "đứa trẻ",
+            "quả chuối",
+            "mưa",
+            "xe hơi"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "book",
+        "answers": [
+            "bông hoa",
+            "quả cam",
+            "quyển sách",
+            "quả táo"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "pen",
+        "answers": [
+            "cây bút",
+            "bông hoa",
+            "máy bay",
+            "bầu trời"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "computer",
+        "answers": [
+            "máy tính",
+            "mặt trời",
+            "ngôi nhà",
+            "bầu trời"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "phone",
+        "answers": [
+            "điện thoại",
+            "bạn bè",
+            "cửa sổ",
+            "người đàn ông"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "water",
+        "answers": [
+            "máy tính",
+            "dòng sông",
+            "lửa",
+            "nước"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "fire",
+        "answers": [
+            "ngôi làng",
+            "cánh cửa",
+            "con tàu",
+            "lửa"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "tree",
+        "answers": [
+            "trường học",
+            "cái cây",
+            "con tàu",
+            "âm nhạc"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "flower",
+        "answers": [
+            "quả cam",
+            "bông hoa",
+            "máy bay",
+            "âm nhạc"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "sun",
+        "answers": [
+            "ngôi nhà",
+            "thành phố",
+            "mặt trời",
+            "cây bút"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "moon",
+        "answers": [
+            "mặt trăng",
+            "ngôi làng",
+            "máy bay",
+            "ngôi nhà"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "star",
+        "answers": [
+            "ngôi sao",
+            "người đàn ông",
+            "bài hát",
+            "máy tính"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "man",
+        "answers": [
+            "gió",
+            "người đàn ông",
+            "bầu trời",
+            "dòng sông"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "woman",
+        "answers": [
+            "cái cây",
+            "trường học",
+            "người phụ nữ",
+            "mặt trời"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "child",
+        "answers": [
+            "con chim",
+            "giáo viên",
+            "đứa trẻ",
+            "biển"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "friend",
+        "answers": [
+            "máy bay",
+            "bạn bè",
+            "mặt trăng",
+            "cửa sổ"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "school",
+        "answers": [
+            "dòng sông",
+            "trường học",
+            "người đàn ông",
+            "đường phố"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "teacher",
+        "answers": [
+            "thành phố",
+            "đồ uống",
+            "mặt trăng",
+            "giáo viên"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "student",
+        "answers": [
+            "học sinh",
+            "mặt trời",
+            "người phụ nữ",
+            "ngọn núi"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "food",
+        "answers": [
+            "âm nhạc",
+            "cánh cửa",
+            "thức ăn",
+            "con chó"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "drink",
+        "answers": [
+            "đất nước",
+            "bạn bè",
+            "đồ uống",
+            "ngôi làng"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "music",
+        "answers": [
+            "quả chuối",
+            "cây bút",
+            "con tàu",
+            "âm nhạc"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "song",
+        "answers": [
+            "cánh cửa",
+            "cái bàn",
+            "bài hát",
+            "ngôi sao"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "city",
+        "answers": [
+            "thành phố",
+            "cánh cửa",
+            "thức ăn",
+            "con mèo"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "village",
+        "answers": [
+            "mưa",
+            "ngôi làng",
+            "mặt trời",
+            "gió"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "country",
+        "answers": [
+            "đất nước",
+            "đường phố",
+            "biển",
+            "cây bút"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "river",
+        "answers": [
+            "dòng sông",
+            "xe hơi",
+            "nước",
+            "đường phố"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "mountain",
+        "answers": [
+            "máy bay",
+            "cánh cửa",
+            "cái cây",
+            "ngọn núi"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "sea",
+        "answers": [
+            "giáo viên",
+            "con mèo",
+            "cánh cửa",
+            "biển"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "sky",
+        "answers": [
+            "quả táo",
+            "bầu trời",
+            "con cá",
+            "quả cam"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "rain",
+        "answers": [
+            "bài hát",
+            "mặt trời",
+            "đồ uống",
+            "mưa"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "snow",
+        "answers": [
+            "biển",
+            "tuyết",
+            "ngọn núi",
+            "con mèo"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "wind",
+        "answers": [
+            "tàu hỏa",
+            "gió",
+            "tuyết",
+            "đứa trẻ"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "road",
+        "answers": [
+            "học sinh",
+            "lửa",
+            "cái bàn",
+            "con đường"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "street",
+        "answers": [
+            "đường phố",
+            "tàu hỏa",
+            "dòng sông",
+            "quả chuối"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "train",
+        "answers": [
+            "dòng sông",
+            "con cá",
+            "thức ăn",
+            "tàu hỏa"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "plane",
+        "answers": [
+            "máy bay",
+            "đường phố",
+            "gió",
+            "tuyết"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "ship",
+        "answers": [
+            "con tàu",
+            "cái ghế",
+            "bông hoa",
+            "đồ uống"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "chair",
+        "answers": [
+            "bạn bè",
+            "con mèo",
+            "cái ghế",
+            "mưa"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "table",
+        "answers": [
+            "cái bàn",
+            "học sinh",
+            "máy bay",
+            "con chim"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "door",
+        "answers": [
+            "bạn bè",
+            "ngôi nhà",
+            "cánh cửa",
+            "quả cam"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "window",
+        "answers": [
+            "cửa sổ",
+            "ngôi làng",
+            "trường học",
+            "người phụ nữ"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "apple",
+        "answers": [
+            "quả táo",
+            "đường phố",
+            "nước",
+            "con tàu"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "banana",
+        "answers": [
+            "người đàn ông",
+            "quả chuối",
+            "học sinh",
+            "biển"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "orange",
+        "answers": [
+            "biển",
+            "quả cam",
+            "tàu hỏa",
+            "cái ghế"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "pear",
+        "answers": [
+            "bầu trời",
+            "quả lê",
+            "lửa",
+            "đường phố"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "dog",
+        "answers": [
+            "đồ uống",
+            "học sinh",
+            "máy tính",
+            "con chó"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "cat",
+        "answers": [
+            "bài hát",
+            "cánh cửa",
+            "gió",
+            "con mèo"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "bird",
+        "answers": [
+            "ngọn núi",
+            "ngôi nhà",
+            "con chim",
+            "học sinh"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "fish",
+        "answers": [
+            "máy bay",
+            "con cá",
+            "đất nước",
+            "quyển sách"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "house",
+        "answers": [
+            "máy tính",
+            "dòng sông",
+            "cửa sổ",
+            "ngôi nhà"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "car",
+        "answers": [
+            "đường phố",
+            "xe hơi",
+            "con chim",
+            "mưa"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "book",
+        "answers": [
+            "quyển sách",
+            "quả cam",
+            "nước",
+            "đồ uống"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "pen",
+        "answers": [
+            "đồ uống",
+            "biển",
+            "dòng sông",
+            "cây bút"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "computer",
+        "answers": [
+            "con đường",
+            "con chó",
+            "máy tính",
+            "con mèo"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "phone",
+        "answers": [
+            "quả lê",
+            "quả chuối",
+            "con tàu",
+            "điện thoại"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "water",
+        "answers": [
+            "nước",
+            "quyển sách",
+            "bài hát",
+            "đường phố"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "fire",
+        "answers": [
+            "lửa",
+            "quyển sách",
+            "quả cam",
+            "máy bay"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "tree",
+        "answers": [
+            "tuyết",
+            "quả táo",
+            "cái cây",
+            "cái bàn"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "flower",
+        "answers": [
+            "cây bút",
+            "bông hoa",
+            "mặt trăng",
+            "xe hơi"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "sun",
+        "answers": [
+            "mặt trời",
+            "trường học",
+            "quả cam",
+            "điện thoại"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "moon",
+        "answers": [
+            "cây bút",
+            "mặt trăng",
+            "đường phố",
+            "tàu hỏa"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "star",
+        "answers": [
+            "tuyết",
+            "ngôi sao",
+            "con chó",
+            "trường học"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "man",
+        "answers": [
+            "người đàn ông",
+            "bài hát",
+            "biển",
+            "máy tính"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "woman",
+        "answers": [
+            "tàu hỏa",
+            "người phụ nữ",
+            "biển",
+            "điện thoại"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "child",
+        "answers": [
+            "đứa trẻ",
+            "quyển sách",
+            "quả cam",
+            "lửa"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "friend",
+        "answers": [
+            "đất nước",
+            "bài hát",
+            "bạn bè",
+            "người đàn ông"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "school",
+        "answers": [
+            "bạn bè",
+            "cánh cửa",
+            "âm nhạc",
+            "trường học"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "teacher",
+        "answers": [
+            "giáo viên",
+            "tàu hỏa",
+            "con cá",
+            "ngôi làng"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "student",
+        "answers": [
+            "học sinh",
+            "con đường",
+            "ngọn núi",
+            "ngôi nhà"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "food",
+        "answers": [
+            "bạn bè",
+            "thức ăn",
+            "cái bàn",
+            "nước"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "drink",
+        "answers": [
+            "đồ uống",
+            "cây bút",
+            "cái ghế",
+            "quả cam"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "music",
+        "answers": [
+            "mặt trời",
+            "cái cây",
+            "âm nhạc",
+            "người phụ nữ"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "song",
+        "answers": [
+            "học sinh",
+            "quả lê",
+            "máy tính",
+            "bài hát"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "city",
+        "answers": [
+            "con tàu",
+            "giáo viên",
+            "thành phố",
+            "con chim"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "village",
+        "answers": [
+            "điện thoại",
+            "bài hát",
+            "âm nhạc",
+            "ngôi làng"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "country",
+        "answers": [
+            "đất nước",
+            "xe hơi",
+            "thức ăn",
+            "mưa"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "river",
+        "answers": [
+            "cái bàn",
+            "lửa",
+            "dòng sông",
+            "bài hát"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "mountain",
+        "answers": [
+            "học sinh",
+            "cái bàn",
+            "ngọn núi",
+            "nước"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "sea",
+        "answers": [
+            "quyển sách",
+            "cây bút",
+            "bông hoa",
+            "biển"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "sky",
+        "answers": [
+            "quả lê",
+            "bầu trời",
+            "ngọn núi",
+            "bông hoa"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "rain",
+        "answers": [
+            "mưa",
+            "quả lê",
+            "dòng sông",
+            "âm nhạc"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "snow",
+        "answers": [
+            "học sinh",
+            "tuyết",
+            "mặt trăng",
+            "bạn bè"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "wind",
+        "answers": [
+            "âm nhạc",
+            "gió",
+            "tuyết",
+            "mưa"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "road",
+        "answers": [
+            "con đường",
+            "âm nhạc",
+            "cái ghế",
+            "mặt trời"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "street",
+        "answers": [
+            "thức ăn",
+            "tuyết",
+            "thành phố",
+            "đường phố"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "train",
+        "answers": [
+            "cái bàn",
+            "đường phố",
+            "bài hát",
+            "tàu hỏa"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "plane",
+        "answers": [
+            "con mèo",
+            "điện thoại",
+            "xe hơi",
+            "máy bay"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "ship",
+        "answers": [
+            "quả táo",
+            "biển",
+            "con đường",
+            "con tàu"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "chair",
+        "answers": [
+            "cánh cửa",
+            "học sinh",
+            "cái ghế",
+            "lửa"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "table",
+        "answers": [
+            "con chim",
+            "đường phố",
+            "cái bàn",
+            "cửa sổ"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "door",
+        "answers": [
+            "trường học",
+            "cánh cửa",
+            "người đàn ông",
+            "con mèo"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "window",
+        "answers": [
+            "cửa sổ",
+            "lửa",
+            "người đàn ông",
+            "quả cam"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "apple",
+        "answers": [
+            "cái cây",
+            "người phụ nữ",
+            "quả táo",
+            "đất nước"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "banana",
+        "answers": [
+            "thức ăn",
+            "quả chuối",
+            "bài hát",
+            "người phụ nữ"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "orange",
+        "answers": [
+            "con mèo",
+            "quả cam",
+            "bạn bè",
+            "xe hơi"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "pear",
+        "answers": [
+            "đứa trẻ",
+            "quả lê",
+            "con đường",
+            "thức ăn"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "dog",
+        "answers": [
+            "cửa sổ",
+            "con chó",
+            "con tàu",
+            "quả táo"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "cat",
+        "answers": [
+            "con mèo",
+            "thành phố",
+            "biển",
+            "con tàu"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "bird",
+        "answers": [
+            "con chim",
+            "thức ăn",
+            "ngôi làng",
+            "tàu hỏa"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "fish",
+        "answers": [
+            "người đàn ông",
+            "con cá",
+            "quả chuối",
+            "mưa"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "house",
+        "answers": [
+            "người phụ nữ",
+            "mặt trăng",
+            "quả táo",
+            "ngôi nhà"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "car",
+        "answers": [
+            "con cá",
+            "xe hơi",
+            "ngôi nhà",
+            "ngôi làng"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "book",
+        "answers": [
+            "xe hơi",
+            "con chim",
+            "âm nhạc",
+            "quyển sách"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "pen",
+        "answers": [
+            "đứa trẻ",
+            "cây bút",
+            "người phụ nữ",
+            "bài hát"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "computer",
+        "answers": [
+            "máy tính",
+            "quả cam",
+            "ngôi sao",
+            "tuyết"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "phone",
+        "answers": [
+            "biển",
+            "điện thoại",
+            "mưa",
+            "quyển sách"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "water",
+        "answers": [
+            "con chó",
+            "nước",
+            "đất nước",
+            "máy tính"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "fire",
+        "answers": [
+            "cánh cửa",
+            "ngôi nhà",
+            "lửa",
+            "bầu trời"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "tree",
+        "answers": [
+            "con chó",
+            "cái cây",
+            "bài hát",
+            "lửa"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "flower",
+        "answers": [
+            "điện thoại",
+            "người đàn ông",
+            "giáo viên",
+            "bông hoa"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "sun",
+        "answers": [
+            "quả chuối",
+            "ngọn núi",
+            "mặt trời",
+            "cây bút"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "moon",
+        "answers": [
+            "quả cam",
+            "cái bàn",
+            "mặt trăng",
+            "mưa"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "star",
+        "answers": [
+            "cái cây",
+            "ngôi sao",
+            "dòng sông",
+            "quả lê"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "man",
+        "answers": [
+            "ngọn núi",
+            "bầu trời",
+            "đồ uống",
+            "người đàn ông"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "woman",
+        "answers": [
+            "cái ghế",
+            "ngọn núi",
+            "xe hơi",
+            "người phụ nữ"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "child",
+        "answers": [
+            "con cá",
+            "đứa trẻ",
+            "ngôi nhà",
+            "đường phố"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "friend",
+        "answers": [
+            "lửa",
+            "bạn bè",
+            "cây bút",
+            "quả chuối"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "school",
+        "answers": [
+            "trường học",
+            "con chó",
+            "người đàn ông",
+            "tuyết"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "teacher",
+        "answers": [
+            "quyển sách",
+            "dòng sông",
+            "giáo viên",
+            "cánh cửa"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "student",
+        "answers": [
+            "con mèo",
+            "đất nước",
+            "con cá",
+            "học sinh"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "food",
+        "answers": [
+            "thức ăn",
+            "người đàn ông",
+            "máy bay",
+            "cái ghế"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "drink",
+        "answers": [
+            "ngôi nhà",
+            "thức ăn",
+            "đứa trẻ",
+            "đồ uống"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "music",
+        "answers": [
+            "đồ uống",
+            "âm nhạc",
+            "con chó",
+            "biển"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "song",
+        "answers": [
+            "cái ghế",
+            "máy tính",
+            "bài hát",
+            "bầu trời"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "city",
+        "answers": [
+            "ngôi làng",
+            "thành phố",
+            "mưa",
+            "ngôi sao"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "village",
+        "answers": [
+            "ngôi làng",
+            "cái cây",
+            "cửa sổ",
+            "người phụ nữ"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "country",
+        "answers": [
+            "đất nước",
+            "ngọn núi",
+            "mặt trời",
+            "máy bay"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "river",
+        "answers": [
+            "dòng sông",
+            "gió",
+            "lửa",
+            "mưa"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "mountain",
+        "answers": [
+            "giáo viên",
+            "quyển sách",
+            "ngọn núi",
+            "mặt trời"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "sea",
+        "answers": [
+            "máy tính",
+            "nước",
+            "biển",
+            "thành phố"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "sky",
+        "answers": [
+            "gió",
+            "con cá",
+            "cái cây",
+            "bầu trời"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "rain",
+        "answers": [
+            "người phụ nữ",
+            "máy bay",
+            "giáo viên",
+            "mưa"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "snow",
+        "answers": [
+            "quả táo",
+            "bầu trời",
+            "tuyết",
+            "dòng sông"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "wind",
+        "answers": [
+            "mặt trời",
+            "con mèo",
+            "gió",
+            "nước"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "road",
+        "answers": [
+            "trường học",
+            "ngôi sao",
+            "thức ăn",
+            "con đường"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "street",
+        "answers": [
+            "dòng sông",
+            "người đàn ông",
+            "máy tính",
+            "đường phố"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "train",
+        "answers": [
+            "tàu hỏa",
+            "cái bàn",
+            "người phụ nữ",
+            "gió"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "plane",
+        "answers": [
+            "máy bay",
+            "con mèo",
+            "thành phố",
+            "cái cây"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "ship",
+        "answers": [
+            "con tàu",
+            "cái cây",
+            "tuyết",
+            "xe hơi"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "chair",
+        "answers": [
+            "thức ăn",
+            "mưa",
+            "cái ghế",
+            "học sinh"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "table",
+        "answers": [
+            "cái bàn",
+            "nước",
+            "giáo viên",
+            "âm nhạc"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "door",
+        "answers": [
+            "điện thoại",
+            "con chim",
+            "máy tính",
+            "cánh cửa"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "window",
+        "answers": [
+            "cửa sổ",
+            "điện thoại",
+            "ngôi làng",
+            "đường phố"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "apple",
+        "answers": [
+            "mặt trời",
+            "người đàn ông",
+            "mặt trăng",
+            "quả táo"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "banana",
+        "answers": [
+            "mặt trời",
+            "quả chuối",
+            "đất nước",
+            "thức ăn"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "orange",
+        "answers": [
+            "con tàu",
+            "quả cam",
+            "cái cây",
+            "bạn bè"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "pear",
+        "answers": [
+            "biển",
+            "bông hoa",
+            "con chó",
+            "quả lê"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "dog",
+        "answers": [
+            "con đường",
+            "máy tính",
+            "con chó",
+            "âm nhạc"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "cat",
+        "answers": [
+            "cái bàn",
+            "con mèo",
+            "giáo viên",
+            "nước"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "bird",
+        "answers": [
+            "cái bàn",
+            "con chim",
+            "máy tính",
+            "lửa"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "fish",
+        "answers": [
+            "con mèo",
+            "bài hát",
+            "con cá",
+            "mặt trời"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "house",
+        "answers": [
+            "ngôi nhà",
+            "mưa",
+            "quyển sách",
+            "tuyết"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "car",
+        "answers": [
+            "con mèo",
+            "máy bay",
+            "lửa",
+            "xe hơi"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "book",
+        "answers": [
+            "mặt trăng",
+            "trường học",
+            "con đường",
+            "quyển sách"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "pen",
+        "answers": [
+            "biển",
+            "thành phố",
+            "bông hoa",
+            "cây bút"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "computer",
+        "answers": [
+            "cái ghế",
+            "máy tính",
+            "trường học",
+            "quả táo"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "phone",
+        "answers": [
+            "con tàu",
+            "quyển sách",
+            "bông hoa",
+            "điện thoại"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "water",
+        "answers": [
+            "máy bay",
+            "nước",
+            "bài hát",
+            "con chó"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "fire",
+        "answers": [
+            "người phụ nữ",
+            "bầu trời",
+            "lửa",
+            "ngôi sao"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "tree",
+        "answers": [
+            "cái cây",
+            "con tàu",
+            "xe hơi",
+            "máy tính"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "flower",
+        "answers": [
+            "điện thoại",
+            "con tàu",
+            "bông hoa",
+            "cửa sổ"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "sun",
+        "answers": [
+            "biển",
+            "mặt trời",
+            "cái cây",
+            "điện thoại"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "moon",
+        "answers": [
+            "mặt trăng",
+            "cánh cửa",
+            "cây bút",
+            "cái bàn"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "star",
+        "answers": [
+            "người phụ nữ",
+            "học sinh",
+            "nước",
+            "ngôi sao"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "man",
+        "answers": [
+            "quả lê",
+            "máy bay",
+            "lửa",
+            "người đàn ông"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "woman",
+        "answers": [
+            "con tàu",
+            "con cá",
+            "đường phố",
+            "người phụ nữ"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "child",
+        "answers": [
+            "con đường",
+            "ngôi sao",
+            "đứa trẻ",
+            "tàu hỏa"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "friend",
+        "answers": [
+            "quả cam",
+            "mặt trời",
+            "con chim",
+            "bạn bè"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "school",
+        "answers": [
+            "trường học",
+            "đồ uống",
+            "cái bàn",
+            "máy tính"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "teacher",
+        "answers": [
+            "giáo viên",
+            "bài hát",
+            "mưa",
+            "bông hoa"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "student",
+        "answers": [
+            "học sinh",
+            "đồ uống",
+            "con chó",
+            "ngôi sao"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "food",
+        "answers": [
+            "thức ăn",
+            "máy bay",
+            "con tàu",
+            "thành phố"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "drink",
+        "answers": [
+            "đường phố",
+            "đồ uống",
+            "mặt trời",
+            "ngọn núi"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "music",
+        "answers": [
+            "âm nhạc",
+            "tuyết",
+            "giáo viên",
+            "cửa sổ"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "song",
+        "answers": [
+            "quả cam",
+            "cửa sổ",
+            "bài hát",
+            "máy bay"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "city",
+        "answers": [
+            "ngọn núi",
+            "cây bút",
+            "biển",
+            "thành phố"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "village",
+        "answers": [
+            "máy tính",
+            "trường học",
+            "quả táo",
+            "ngôi làng"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "country",
+        "answers": [
+            "dòng sông",
+            "đất nước",
+            "cái ghế",
+            "cây bút"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "river",
+        "answers": [
+            "dòng sông",
+            "bài hát",
+            "giáo viên",
+            "học sinh"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "mountain",
+        "answers": [
+            "mặt trăng",
+            "lửa",
+            "ngọn núi",
+            "quả lê"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "sea",
+        "answers": [
+            "tuyết",
+            "con chim",
+            "biển",
+            "máy bay"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "sky",
+        "answers": [
+            "máy bay",
+            "con đường",
+            "bầu trời",
+            "người đàn ông"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "rain",
+        "answers": [
+            "người phụ nữ",
+            "mưa",
+            "gió",
+            "bầu trời"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "snow",
+        "answers": [
+            "ngôi sao",
+            "ngôi nhà",
+            "tuyết",
+            "quyển sách"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "wind",
+        "answers": [
+            "gió",
+            "cửa sổ",
+            "điện thoại",
+            "thành phố"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "road",
+        "answers": [
+            "lửa",
+            "quả lê",
+            "tuyết",
+            "con đường"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "street",
+        "answers": [
+            "con cá",
+            "ngôi sao",
+            "đường phố",
+            "con đường"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "train",
+        "answers": [
+            "cái bàn",
+            "tàu hỏa",
+            "thành phố",
+            "âm nhạc"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "plane",
+        "answers": [
+            "đứa trẻ",
+            "đồ uống",
+            "cửa sổ",
+            "máy bay"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "ship",
+        "answers": [
+            "quả lê",
+            "con tàu",
+            "con chim",
+            "con cá"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "chair",
+        "answers": [
+            "con mèo",
+            "cái ghế",
+            "con tàu",
+            "dòng sông"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "table",
+        "answers": [
+            "cái bàn",
+            "con cá",
+            "điện thoại",
+            "quả lê"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "door",
+        "answers": [
+            "biển",
+            "bầu trời",
+            "cánh cửa",
+            "bài hát"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "window",
+        "answers": [
+            "cửa sổ",
+            "con chó",
+            "người đàn ông",
+            "bạn bè"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "apple",
+        "answers": [
+            "biển",
+            "quả táo",
+            "cây bút",
+            "bạn bè"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "banana",
+        "answers": [
+            "ngôi sao",
+            "con chó",
+            "quả chuối",
+            "gió"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "orange",
+        "answers": [
+            "quả cam",
+            "con mèo",
+            "cái cây",
+            "dòng sông"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "pear",
+        "answers": [
+            "quả lê",
+            "tuyết",
+            "cái ghế",
+            "con chó"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "dog",
+        "answers": [
+            "ngọn núi",
+            "người phụ nữ",
+            "dòng sông",
+            "con chó"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "cat",
+        "answers": [
+            "thành phố",
+            "con mèo",
+            "con cá",
+            "bài hát"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "bird",
+        "answers": [
+            "mặt trăng",
+            "tàu hỏa",
+            "con chim",
+            "người phụ nữ"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "fish",
+        "answers": [
+            "con cá",
+            "ngôi làng",
+            "con chim",
+            "gió"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "house",
+        "answers": [
+            "nước",
+            "máy bay",
+            "ngôi nhà",
+            "cái bàn"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "car",
+        "answers": [
+            "máy tính",
+            "bông hoa",
+            "xe hơi",
+            "giáo viên"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "book",
+        "answers": [
+            "nước",
+            "biển",
+            "quyển sách",
+            "con mèo"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "pen",
+        "answers": [
+            "bạn bè",
+            "học sinh",
+            "điện thoại",
+            "cây bút"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "computer",
+        "answers": [
+            "đứa trẻ",
+            "con đường",
+            "máy tính",
+            "bông hoa"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "phone",
+        "answers": [
+            "điện thoại",
+            "dòng sông",
+            "quả cam",
+            "người phụ nữ"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "water",
+        "answers": [
+            "học sinh",
+            "nước",
+            "xe hơi",
+            "con chó"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "fire",
+        "answers": [
+            "tuyết",
+            "trường học",
+            "lửa",
+            "tàu hỏa"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "tree",
+        "answers": [
+            "cái cây",
+            "con mèo",
+            "cửa sổ",
+            "con cá"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "flower",
+        "answers": [
+            "bông hoa",
+            "trường học",
+            "mặt trời",
+            "ngọn núi"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "sun",
+        "answers": [
+            "trường học",
+            "quả chuối",
+            "gió",
+            "mặt trời"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "moon",
+        "answers": [
+            "cái bàn",
+            "quả chuối",
+            "mặt trăng",
+            "quyển sách"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "star",
+        "answers": [
+            "giáo viên",
+            "quả táo",
+            "ngôi sao",
+            "ngôi nhà"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "man",
+        "answers": [
+            "cái bàn",
+            "cái ghế",
+            "tuyết",
+            "người đàn ông"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "woman",
+        "answers": [
+            "quyển sách",
+            "quả táo",
+            "người phụ nữ",
+            "bạn bè"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "child",
+        "answers": [
+            "gió",
+            "biển",
+            "đứa trẻ",
+            "đất nước"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "friend",
+        "answers": [
+            "máy tính",
+            "đứa trẻ",
+            "thức ăn",
+            "bạn bè"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "school",
+        "answers": [
+            "bài hát",
+            "trường học",
+            "cửa sổ",
+            "bầu trời"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "teacher",
+        "answers": [
+            "thành phố",
+            "ngôi sao",
+            "bạn bè",
+            "giáo viên"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "student",
+        "answers": [
+            "học sinh",
+            "thành phố",
+            "ngôi nhà",
+            "bạn bè"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "food",
+        "answers": [
+            "ngọn núi",
+            "mặt trăng",
+            "âm nhạc",
+            "thức ăn"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "drink",
+        "answers": [
+            "đứa trẻ",
+            "con chim",
+            "quả táo",
+            "đồ uống"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "music",
+        "answers": [
+            "quả táo",
+            "âm nhạc",
+            "điện thoại",
+            "máy tính"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "song",
+        "answers": [
+            "quả cam",
+            "con tàu",
+            "bài hát",
+            "bông hoa"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "city",
+        "answers": [
+            "máy tính",
+            "dòng sông",
+            "thành phố",
+            "con chim"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "village",
+        "answers": [
+            "ngôi làng",
+            "đồ uống",
+            "mưa",
+            "con tàu"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "country",
+        "answers": [
+            "đất nước",
+            "bầu trời",
+            "giáo viên",
+            "máy tính"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "river",
+        "answers": [
+            "quả táo",
+            "quyển sách",
+            "bạn bè",
+            "dòng sông"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "mountain",
+        "answers": [
+            "bông hoa",
+            "ngọn núi",
+            "con tàu",
+            "đất nước"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "sea",
+        "answers": [
+            "lửa",
+            "cái ghế",
+            "biển",
+            "ngôi sao"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "sky",
+        "answers": [
+            "bầu trời",
+            "người đàn ông",
+            "con đường",
+            "gió"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "rain",
+        "answers": [
+            "ngôi nhà",
+            "quả chuối",
+            "mưa",
+            "cái cây"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "snow",
+        "answers": [
+            "tuyết",
+            "trường học",
+            "quả lê",
+            "con chó"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "wind",
+        "answers": [
+            "gió",
+            "tàu hỏa",
+            "ngôi làng",
+            "giáo viên"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "road",
+        "answers": [
+            "cái ghế",
+            "đứa trẻ",
+            "con đường",
+            "đất nước"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "street",
+        "answers": [
+            "bài hát",
+            "người đàn ông",
+            "ngọn núi",
+            "đường phố"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "train",
+        "answers": [
+            "bầu trời",
+            "biển",
+            "quả táo",
+            "tàu hỏa"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "plane",
+        "answers": [
+            "máy bay",
+            "đồ uống",
+            "ngọn núi",
+            "trường học"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "ship",
+        "answers": [
+            "con tàu",
+            "xe hơi",
+            "quả cam",
+            "cửa sổ"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "chair",
+        "answers": [
+            "cái ghế",
+            "dòng sông",
+            "quả cam",
+            "máy bay"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "table",
+        "answers": [
+            "ngôi sao",
+            "máy tính",
+            "thức ăn",
+            "cái bàn"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "door",
+        "answers": [
+            "học sinh",
+            "cái bàn",
+            "người phụ nữ",
+            "cánh cửa"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "window",
+        "answers": [
+            "mặt trời",
+            "con chim",
+            "cánh cửa",
+            "cửa sổ"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "apple",
+        "answers": [
+            "ngọn núi",
+            "quyển sách",
+            "giáo viên",
+            "quả táo"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "banana",
+        "answers": [
+            "con tàu",
+            "quả chuối",
+            "đồ uống",
+            "gió"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "orange",
+        "answers": [
+            "cánh cửa",
+            "cây bút",
+            "ngôi nhà",
+            "quả cam"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "pear",
+        "answers": [
+            "đứa trẻ",
+            "con đường",
+            "quả lê",
+            "mưa"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "dog",
+        "answers": [
+            "con chó",
+            "thành phố",
+            "mặt trời",
+            "đứa trẻ"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "cat",
+        "answers": [
+            "cây bút",
+            "cái bàn",
+            "con đường",
+            "con mèo"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "bird",
+        "answers": [
+            "con cá",
+            "con chim",
+            "cái cây",
+            "cái bàn"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "fish",
+        "answers": [
+            "trường học",
+            "con cá",
+            "lửa",
+            "bầu trời"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "house",
+        "answers": [
+            "ngôi nhà",
+            "ngôi sao",
+            "quả lê",
+            "đứa trẻ"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "car",
+        "answers": [
+            "tuyết",
+            "ngôi nhà",
+            "xe hơi",
+            "âm nhạc"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "book",
+        "answers": [
+            "cánh cửa",
+            "quyển sách",
+            "ngôi sao",
+            "mặt trời"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "pen",
+        "answers": [
+            "cây bút",
+            "học sinh",
+            "bầu trời",
+            "âm nhạc"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "computer",
+        "answers": [
+            "nước",
+            "máy tính",
+            "đồ uống",
+            "điện thoại"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "phone",
+        "answers": [
+            "tàu hỏa",
+            "gió",
+            "quả táo",
+            "điện thoại"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "water",
+        "answers": [
+            "con đường",
+            "nước",
+            "con chó",
+            "cánh cửa"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "fire",
+        "answers": [
+            "thức ăn",
+            "ngôi sao",
+            "con mèo",
+            "lửa"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "tree",
+        "answers": [
+            "nước",
+            "bông hoa",
+            "mặt trời",
+            "cái cây"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "flower",
+        "answers": [
+            "bông hoa",
+            "thức ăn",
+            "người đàn ông",
+            "cái ghế"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "sun",
+        "answers": [
+            "cửa sổ",
+            "cánh cửa",
+            "mặt trăng",
+            "mặt trời"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "moon",
+        "answers": [
+            "biển",
+            "ngôi làng",
+            "quả chuối",
+            "mặt trăng"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "star",
+        "answers": [
+            "máy tính",
+            "cái bàn",
+            "ngôi sao",
+            "cái ghế"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "man",
+        "answers": [
+            "người đàn ông",
+            "cửa sổ",
+            "quả lê",
+            "con chó"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "woman",
+        "answers": [
+            "xe hơi",
+            "người phụ nữ",
+            "máy tính",
+            "đất nước"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "child",
+        "answers": [
+            "quả lê",
+            "bầu trời",
+            "đứa trẻ",
+            "lửa"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "friend",
+        "answers": [
+            "quả cam",
+            "bạn bè",
+            "thành phố",
+            "cái cây"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "school",
+        "answers": [
+            "trường học",
+            "ngọn núi",
+            "cái cây",
+            "con cá"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "teacher",
+        "answers": [
+            "cây bút",
+            "giáo viên",
+            "con chó",
+            "mặt trời"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "student",
+        "answers": [
+            "học sinh",
+            "quả cam",
+            "con chim",
+            "lửa"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "food",
+        "answers": [
+            "đứa trẻ",
+            "cây bút",
+            "thức ăn",
+            "xe hơi"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "drink",
+        "answers": [
+            "cánh cửa",
+            "thức ăn",
+            "mặt trời",
+            "đồ uống"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "music",
+        "answers": [
+            "quả cam",
+            "tàu hỏa",
+            "âm nhạc",
+            "giáo viên"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "song",
+        "answers": [
+            "con chim",
+            "bài hát",
+            "tuyết",
+            "bầu trời"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "city",
+        "answers": [
+            "học sinh",
+            "lửa",
+            "con đường",
+            "thành phố"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "village",
+        "answers": [
+            "ngôi làng",
+            "học sinh",
+            "xe hơi",
+            "quả lê"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "country",
+        "answers": [
+            "bông hoa",
+            "học sinh",
+            "ngôi làng",
+            "đất nước"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "river",
+        "answers": [
+            "điện thoại",
+            "mặt trời",
+            "dòng sông",
+            "nước"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "mountain",
+        "answers": [
+            "ngọn núi",
+            "cái ghế",
+            "ngôi nhà",
+            "dòng sông"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "sea",
+        "answers": [
+            "cây bút",
+            "biển",
+            "ngôi sao",
+            "gió"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "sky",
+        "answers": [
+            "bầu trời",
+            "lửa",
+            "cánh cửa",
+            "ngôi sao"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "rain",
+        "answers": [
+            "tuyết",
+            "bông hoa",
+            "mưa",
+            "lửa"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "snow",
+        "answers": [
+            "tuyết",
+            "bài hát",
+            "con chim",
+            "âm nhạc"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "wind",
+        "answers": [
+            "ngôi nhà",
+            "quả táo",
+            "gió",
+            "mặt trăng"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "road",
+        "answers": [
+            "con đường",
+            "quyển sách",
+            "học sinh",
+            "thành phố"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "street",
+        "answers": [
+            "thành phố",
+            "quả lê",
+            "đường phố",
+            "ngọn núi"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "train",
+        "answers": [
+            "con chim",
+            "tàu hỏa",
+            "người phụ nữ",
+            "cửa sổ"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "plane",
+        "answers": [
+            "đồ uống",
+            "ngôi nhà",
+            "mưa",
+            "máy bay"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "ship",
+        "answers": [
+            "đồ uống",
+            "con tàu",
+            "lửa",
+            "tàu hỏa"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "chair",
+        "answers": [
+            "con đường",
+            "ngôi sao",
+            "người đàn ông",
+            "cái ghế"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "table",
+        "answers": [
+            "mặt trời",
+            "cái ghế",
+            "người đàn ông",
+            "cái bàn"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "door",
+        "answers": [
+            "ngôi nhà",
+            "đứa trẻ",
+            "tàu hỏa",
+            "cánh cửa"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "window",
+        "answers": [
+            "quyển sách",
+            "cửa sổ",
+            "ngôi làng",
+            "ngôi nhà"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "apple",
+        "answers": [
+            "học sinh",
+            "quyển sách",
+            "lửa",
+            "quả táo"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "banana",
+        "answers": [
+            "dòng sông",
+            "quả chuối",
+            "quả lê",
+            "con đường"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "orange",
+        "answers": [
+            "quả cam",
+            "nước",
+            "biển",
+            "cái cây"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "pear",
+        "answers": [
+            "điện thoại",
+            "trường học",
+            "cửa sổ",
+            "quả lê"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "dog",
+        "answers": [
+            "con chó",
+            "bầu trời",
+            "người phụ nữ",
+            "trường học"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "cat",
+        "answers": [
+            "học sinh",
+            "xe hơi",
+            "con mèo",
+            "bầu trời"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "bird",
+        "answers": [
+            "con chim",
+            "bài hát",
+            "đồ uống",
+            "quyển sách"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "fish",
+        "answers": [
+            "con cá",
+            "ngôi nhà",
+            "cái ghế",
+            "lửa"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "house",
+        "answers": [
+            "mặt trời",
+            "ngôi nhà",
+            "học sinh",
+            "quả cam"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "car",
+        "answers": [
+            "ngôi nhà",
+            "cái cây",
+            "quả cam",
+            "xe hơi"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "book",
+        "answers": [
+            "ngôi sao",
+            "gió",
+            "bông hoa",
+            "quyển sách"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "pen",
+        "answers": [
+            "điện thoại",
+            "cây bút",
+            "tàu hỏa",
+            "cánh cửa"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "computer",
+        "answers": [
+            "cái bàn",
+            "gió",
+            "máy tính",
+            "nước"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "phone",
+        "answers": [
+            "mặt trời",
+            "điện thoại",
+            "con đường",
+            "đất nước"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "water",
+        "answers": [
+            "nước",
+            "điện thoại",
+            "cánh cửa",
+            "con mèo"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "fire",
+        "answers": [
+            "lửa",
+            "cái ghế",
+            "bạn bè",
+            "xe hơi"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "tree",
+        "answers": [
+            "tàu hỏa",
+            "con tàu",
+            "quả chuối",
+            "cái cây"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "flower",
+        "answers": [
+            "máy bay",
+            "bông hoa",
+            "cái bàn",
+            "ngôi sao"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "sun",
+        "answers": [
+            "xe hơi",
+            "dòng sông",
+            "con mèo",
+            "mặt trời"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "moon",
+        "answers": [
+            "xe hơi",
+            "mặt trăng",
+            "con chim",
+            "cây bút"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "star",
+        "answers": [
+            "thành phố",
+            "tuyết",
+            "quả lê",
+            "ngôi sao"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "man",
+        "answers": [
+            "con tàu",
+            "con đường",
+            "cái cây",
+            "người đàn ông"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "woman",
+        "answers": [
+            "bài hát",
+            "quả táo",
+            "người phụ nữ",
+            "ngọn núi"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "child",
+        "answers": [
+            "bầu trời",
+            "đứa trẻ",
+            "cái ghế",
+            "cánh cửa"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "friend",
+        "answers": [
+            "xe hơi",
+            "cái ghế",
+            "con đường",
+            "bạn bè"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "school",
+        "answers": [
+            "con chó",
+            "con cá",
+            "trường học",
+            "ngôi làng"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "teacher",
+        "answers": [
+            "tàu hỏa",
+            "giáo viên",
+            "nước",
+            "học sinh"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "student",
+        "answers": [
+            "học sinh",
+            "đứa trẻ",
+            "quyển sách",
+            "máy bay"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "food",
+        "answers": [
+            "cửa sổ",
+            "nước",
+            "quả chuối",
+            "thức ăn"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "drink",
+        "answers": [
+            "đồ uống",
+            "đất nước",
+            "điện thoại",
+            "thức ăn"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "music",
+        "answers": [
+            "ngôi làng",
+            "thành phố",
+            "âm nhạc",
+            "tuyết"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "song",
+        "answers": [
+            "thức ăn",
+            "bài hát",
+            "mưa",
+            "ngôi nhà"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "city",
+        "answers": [
+            "nước",
+            "thành phố",
+            "đồ uống",
+            "cánh cửa"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "village",
+        "answers": [
+            "tuyết",
+            "bầu trời",
+            "ngôi làng",
+            "âm nhạc"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "country",
+        "answers": [
+            "ngọn núi",
+            "máy bay",
+            "đất nước",
+            "quả cam"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "river",
+        "answers": [
+            "ngôi nhà",
+            "con tàu",
+            "quả chuối",
+            "dòng sông"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "mountain",
+        "answers": [
+            "ngôi làng",
+            "ngọn núi",
+            "đường phố",
+            "bạn bè"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "sea",
+        "answers": [
+            "biển",
+            "con chó",
+            "bông hoa",
+            "ngôi sao"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "sky",
+        "answers": [
+            "thức ăn",
+            "bầu trời",
+            "cái ghế",
+            "máy bay"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "rain",
+        "answers": [
+            "nước",
+            "ngôi sao",
+            "mưa",
+            "tuyết"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "snow",
+        "answers": [
+            "tuyết",
+            "con mèo",
+            "người phụ nữ",
+            "ngôi sao"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "wind",
+        "answers": [
+            "lửa",
+            "gió",
+            "dòng sông",
+            "cây bút"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "road",
+        "answers": [
+            "máy tính",
+            "đất nước",
+            "con cá",
+            "con đường"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "street",
+        "answers": [
+            "thành phố",
+            "mặt trăng",
+            "đường phố",
+            "con chim"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "train",
+        "answers": [
+            "học sinh",
+            "giáo viên",
+            "con chó",
+            "tàu hỏa"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "plane",
+        "answers": [
+            "máy bay",
+            "cái bàn",
+            "quyển sách",
+            "ngôi sao"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "ship",
+        "answers": [
+            "mặt trăng",
+            "con tàu",
+            "ngôi làng",
+            "quả lê"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "chair",
+        "answers": [
+            "bạn bè",
+            "tuyết",
+            "tàu hỏa",
+            "cái ghế"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "table",
+        "answers": [
+            "lửa",
+            "cái bàn",
+            "xe hơi",
+            "nước"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "door",
+        "answers": [
+            "ngôi làng",
+            "cánh cửa",
+            "đường phố",
+            "học sinh"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "window",
+        "answers": [
+            "cửa sổ",
+            "âm nhạc",
+            "bài hát",
+            "ngôi sao"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "apple",
+        "answers": [
+            "con chim",
+            "quả táo",
+            "cái cây",
+            "con tàu"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "banana",
+        "answers": [
+            "quả chuối",
+            "quyển sách",
+            "cánh cửa",
+            "thức ăn"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "orange",
+        "answers": [
+            "đồ uống",
+            "trường học",
+            "xe hơi",
+            "quả cam"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "pear",
+        "answers": [
+            "biển",
+            "cái cây",
+            "quả lê",
+            "ngọn núi"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "dog",
+        "answers": [
+            "con chó",
+            "mưa",
+            "ngôi sao",
+            "bông hoa"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "cat",
+        "answers": [
+            "con mèo",
+            "cửa sổ",
+            "ngôi nhà",
+            "bạn bè"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "bird",
+        "answers": [
+            "con chim",
+            "cái cây",
+            "cái ghế",
+            "con tàu"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "fish",
+        "answers": [
+            "bầu trời",
+            "con cá",
+            "người đàn ông",
+            "gió"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "house",
+        "answers": [
+            "con cá",
+            "ngôi nhà",
+            "quả lê",
+            "quyển sách"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "car",
+        "answers": [
+            "cánh cửa",
+            "cây bút",
+            "máy bay",
+            "xe hơi"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "book",
+        "answers": [
+            "tàu hỏa",
+            "quả táo",
+            "quyển sách",
+            "con chó"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "pen",
+        "answers": [
+            "tuyết",
+            "trường học",
+            "cây bút",
+            "quả táo"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "computer",
+        "answers": [
+            "con chó",
+            "cánh cửa",
+            "con tàu",
+            "máy tính"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "phone",
+        "answers": [
+            "quả táo",
+            "điện thoại",
+            "quyển sách",
+            "quả chuối"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "water",
+        "answers": [
+            "bạn bè",
+            "trường học",
+            "nước",
+            "con đường"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "fire",
+        "answers": [
+            "lửa",
+            "con chim",
+            "ngôi sao",
+            "xe hơi"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "tree",
+        "answers": [
+            "con chó",
+            "cái cây",
+            "nước",
+            "quyển sách"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "flower",
+        "answers": [
+            "quả táo",
+            "điện thoại",
+            "đồ uống",
+            "bông hoa"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "sun",
+        "answers": [
+            "âm nhạc",
+            "mặt trời",
+            "con chim",
+            "cánh cửa"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "moon",
+        "answers": [
+            "ngôi làng",
+            "con mèo",
+            "mặt trăng",
+            "máy bay"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "star",
+        "answers": [
+            "máy bay",
+            "con chó",
+            "ngôi sao",
+            "mặt trời"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "man",
+        "answers": [
+            "tàu hỏa",
+            "thành phố",
+            "học sinh",
+            "người đàn ông"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "woman",
+        "answers": [
+            "dòng sông",
+            "người phụ nữ",
+            "đất nước",
+            "ngọn núi"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "child",
+        "answers": [
+            "học sinh",
+            "cánh cửa",
+            "tuyết",
+            "đứa trẻ"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "friend",
+        "answers": [
+            "đất nước",
+            "quyển sách",
+            "người đàn ông",
+            "bạn bè"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "school",
+        "answers": [
+            "trường học",
+            "thức ăn",
+            "bạn bè",
+            "ngọn núi"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "teacher",
+        "answers": [
+            "máy bay",
+            "giáo viên",
+            "mặt trời",
+            "đồ uống"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "student",
+        "answers": [
+            "người phụ nữ",
+            "lửa",
+            "âm nhạc",
+            "học sinh"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "food",
+        "answers": [
+            "thức ăn",
+            "con cá",
+            "âm nhạc",
+            "người đàn ông"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "drink",
+        "answers": [
+            "tuyết",
+            "đồ uống",
+            "con chim",
+            "con chó"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "music",
+        "answers": [
+            "âm nhạc",
+            "con chó",
+            "gió",
+            "bài hát"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "song",
+        "answers": [
+            "bài hát",
+            "con tàu",
+            "đồ uống",
+            "xe hơi"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "city",
+        "answers": [
+            "đồ uống",
+            "âm nhạc",
+            "thành phố",
+            "người phụ nữ"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "village",
+        "answers": [
+            "ngôi làng",
+            "dòng sông",
+            "ngôi sao",
+            "quả táo"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "country",
+        "answers": [
+            "đường phố",
+            "con tàu",
+            "bài hát",
+            "đất nước"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "river",
+        "answers": [
+            "dòng sông",
+            "con chó",
+            "biển",
+            "tàu hỏa"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "mountain",
+        "answers": [
+            "cửa sổ",
+            "đất nước",
+            "ngôi nhà",
+            "ngọn núi"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "sea",
+        "answers": [
+            "đồ uống",
+            "biển",
+            "quả chuối",
+            "quả cam"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "sky",
+        "answers": [
+            "bầu trời",
+            "trường học",
+            "đồ uống",
+            "bông hoa"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "rain",
+        "answers": [
+            "ngôi sao",
+            "mưa",
+            "đồ uống",
+            "quả táo"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "snow",
+        "answers": [
+            "tuyết",
+            "con chó",
+            "điện thoại",
+            "người phụ nữ"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "wind",
+        "answers": [
+            "ngôi sao",
+            "mặt trời",
+            "gió",
+            "bài hát"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "road",
+        "answers": [
+            "bầu trời",
+            "máy tính",
+            "tàu hỏa",
+            "con đường"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "street",
+        "answers": [
+            "quả táo",
+            "đường phố",
+            "máy tính",
+            "trường học"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "train",
+        "answers": [
+            "xe hơi",
+            "tàu hỏa",
+            "quả lê",
+            "cái cây"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "plane",
+        "answers": [
+            "máy bay",
+            "con đường",
+            "bông hoa",
+            "gió"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "ship",
+        "answers": [
+            "cái cây",
+            "con tàu",
+            "cái bàn",
+            "mưa"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "chair",
+        "answers": [
+            "biển",
+            "cái ghế",
+            "bầu trời",
+            "mặt trời"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "table",
+        "answers": [
+            "con tàu",
+            "quả lê",
+            "cái bàn",
+            "biển"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "door",
+        "answers": [
+            "máy bay",
+            "cánh cửa",
+            "nước",
+            "học sinh"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "window",
+        "answers": [
+            "con chim",
+            "ngôi làng",
+            "mặt trăng",
+            "cửa sổ"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "apple",
+        "answers": [
+            "quả táo",
+            "bài hát",
+            "con mèo",
+            "nước"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "banana",
+        "answers": [
+            "học sinh",
+            "quả chuối",
+            "âm nhạc",
+            "bầu trời"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "orange",
+        "answers": [
+            "mặt trăng",
+            "người phụ nữ",
+            "quả cam",
+            "cây bút"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "pear",
+        "answers": [
+            "bông hoa",
+            "quả cam",
+            "quả lê",
+            "mưa"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "dog",
+        "answers": [
+            "trường học",
+            "con đường",
+            "máy bay",
+            "con chó"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "cat",
+        "answers": [
+            "trường học",
+            "xe hơi",
+            "con mèo",
+            "con đường"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "bird",
+        "answers": [
+            "con chim",
+            "giáo viên",
+            "mặt trời",
+            "mặt trăng"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "fish",
+        "answers": [
+            "nước",
+            "con cá",
+            "thức ăn",
+            "xe hơi"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "house",
+        "answers": [
+            "ngọn núi",
+            "cái bàn",
+            "ngôi nhà",
+            "thức ăn"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "car",
+        "answers": [
+            "dòng sông",
+            "quả cam",
+            "xe hơi",
+            "cái ghế"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "book",
+        "answers": [
+            "cái cây",
+            "bông hoa",
+            "quyển sách",
+            "ngôi làng"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "pen",
+        "answers": [
+            "máy tính",
+            "bông hoa",
+            "cây bút",
+            "đất nước"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "computer",
+        "answers": [
+            "máy tính",
+            "mặt trời",
+            "con chim",
+            "nước"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "phone",
+        "answers": [
+            "mặt trăng",
+            "đất nước",
+            "điện thoại",
+            "con chó"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "water",
+        "answers": [
+            "con chim",
+            "nước",
+            "đồ uống",
+            "điện thoại"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "fire",
+        "answers": [
+            "con chó",
+            "ngọn núi",
+            "lửa",
+            "mặt trời"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "tree",
+        "answers": [
+            "tàu hỏa",
+            "quả chuối",
+            "giáo viên",
+            "cái cây"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "flower",
+        "answers": [
+            "bầu trời",
+            "quả táo",
+            "bài hát",
+            "bông hoa"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "sun",
+        "answers": [
+            "thức ăn",
+            "ngọn núi",
+            "tuyết",
+            "mặt trời"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "moon",
+        "answers": [
+            "mặt trăng",
+            "con chim",
+            "gió",
+            "con đường"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "star",
+        "answers": [
+            "ngôi nhà",
+            "xe hơi",
+            "lửa",
+            "ngôi sao"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "man",
+        "answers": [
+            "đồ uống",
+            "con cá",
+            "người đàn ông",
+            "máy tính"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "woman",
+        "answers": [
+            "gió",
+            "điện thoại",
+            "dòng sông",
+            "người phụ nữ"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "child",
+        "answers": [
+            "đất nước",
+            "đứa trẻ",
+            "cái ghế",
+            "người đàn ông"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "friend",
+        "answers": [
+            "ngọn núi",
+            "cây bút",
+            "quyển sách",
+            "bạn bè"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "school",
+        "answers": [
+            "trường học",
+            "mặt trời",
+            "dòng sông",
+            "ngôi sao"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "teacher",
+        "answers": [
+            "cây bút",
+            "giáo viên",
+            "mặt trăng",
+            "dòng sông"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "student",
+        "answers": [
+            "tàu hỏa",
+            "đất nước",
+            "âm nhạc",
+            "học sinh"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "food",
+        "answers": [
+            "thức ăn",
+            "người đàn ông",
+            "cửa sổ",
+            "mặt trăng"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "drink",
+        "answers": [
+            "thức ăn",
+            "điện thoại",
+            "ngọn núi",
+            "đồ uống"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "music",
+        "answers": [
+            "mưa",
+            "cánh cửa",
+            "bông hoa",
+            "âm nhạc"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "song",
+        "answers": [
+            "đứa trẻ",
+            "bạn bè",
+            "bài hát",
+            "biển"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "city",
+        "answers": [
+            "con chim",
+            "thành phố",
+            "quả lê",
+            "cửa sổ"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "village",
+        "answers": [
+            "học sinh",
+            "ngôi làng",
+            "cánh cửa",
+            "xe hơi"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "country",
+        "answers": [
+            "quyển sách",
+            "đất nước",
+            "bầu trời",
+            "bông hoa"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "river",
+        "answers": [
+            "đồ uống",
+            "cái bàn",
+            "tàu hỏa",
+            "dòng sông"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "mountain",
+        "answers": [
+            "ngọn núi",
+            "cây bút",
+            "máy tính",
+            "xe hơi"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "sea",
+        "answers": [
+            "đồ uống",
+            "ngôi sao",
+            "biển",
+            "con đường"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "sky",
+        "answers": [
+            "bài hát",
+            "bầu trời",
+            "nước",
+            "ngôi sao"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "rain",
+        "answers": [
+            "mưa",
+            "học sinh",
+            "quả chuối",
+            "con tàu"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "snow",
+        "answers": [
+            "lửa",
+            "tuyết",
+            "ngôi sao",
+            "con đường"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "wind",
+        "answers": [
+            "người đàn ông",
+            "gió",
+            "đường phố",
+            "quả chuối"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "road",
+        "answers": [
+            "âm nhạc",
+            "giáo viên",
+            "đứa trẻ",
+            "con đường"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "street",
+        "answers": [
+            "thành phố",
+            "đồ uống",
+            "con tàu",
+            "đường phố"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "train",
+        "answers": [
+            "tàu hỏa",
+            "đồ uống",
+            "ngọn núi",
+            "thành phố"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "plane",
+        "answers": [
+            "con cá",
+            "mưa",
+            "máy bay",
+            "bạn bè"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "ship",
+        "answers": [
+            "điện thoại",
+            "bầu trời",
+            "con tàu",
+            "ngôi sao"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "chair",
+        "answers": [
+            "xe hơi",
+            "quả táo",
+            "cái ghế",
+            "đứa trẻ"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "table",
+        "answers": [
+            "cái bàn",
+            "ngôi sao",
+            "máy bay",
+            "cái ghế"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "door",
+        "answers": [
+            "cánh cửa",
+            "máy bay",
+            "con đường",
+            "thành phố"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "window",
+        "answers": [
+            "con chim",
+            "cửa sổ",
+            "đường phố",
+            "con cá"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "apple",
+        "answers": [
+            "mặt trăng",
+            "mặt trời",
+            "quả táo",
+            "tàu hỏa"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "banana",
+        "answers": [
+            "ngôi nhà",
+            "âm nhạc",
+            "con cá",
+            "quả chuối"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "orange",
+        "answers": [
+            "quả chuối",
+            "quả cam",
+            "ngôi nhà",
+            "quyển sách"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "pear",
+        "answers": [
+            "giáo viên",
+            "cánh cửa",
+            "quả lê",
+            "âm nhạc"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "dog",
+        "answers": [
+            "con đường",
+            "quả chuối",
+            "học sinh",
+            "con chó"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "cat",
+        "answers": [
+            "con mèo",
+            "bạn bè",
+            "đường phố",
+            "giáo viên"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "bird",
+        "answers": [
+            "quyển sách",
+            "con chim",
+            "người phụ nữ",
+            "gió"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "fish",
+        "answers": [
+            "con chó",
+            "quả cam",
+            "quả chuối",
+            "con cá"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "house",
+        "answers": [
+            "ngôi nhà",
+            "biển",
+            "điện thoại",
+            "nước"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "car",
+        "answers": [
+            "cửa sổ",
+            "cái bàn",
+            "xe hơi",
+            "bông hoa"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "book",
+        "answers": [
+            "quyển sách",
+            "mặt trăng",
+            "người đàn ông",
+            "cây bút"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "pen",
+        "answers": [
+            "xe hơi",
+            "biển",
+            "cây bút",
+            "quả chuối"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "computer",
+        "answers": [
+            "máy tính",
+            "đất nước",
+            "con mèo",
+            "tàu hỏa"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "phone",
+        "answers": [
+            "điện thoại",
+            "thức ăn",
+            "mưa",
+            "tàu hỏa"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "water",
+        "answers": [
+            "điện thoại",
+            "mặt trời",
+            "nước",
+            "đứa trẻ"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "fire",
+        "answers": [
+            "quả lê",
+            "học sinh",
+            "lửa",
+            "bông hoa"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "tree",
+        "answers": [
+            "cái cây",
+            "người phụ nữ",
+            "người đàn ông",
+            "giáo viên"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "flower",
+        "answers": [
+            "xe hơi",
+            "cái bàn",
+            "bông hoa",
+            "thức ăn"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "sun",
+        "answers": [
+            "cánh cửa",
+            "quả táo",
+            "mặt trời",
+            "quả cam"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "moon",
+        "answers": [
+            "giáo viên",
+            "mặt trăng",
+            "mưa",
+            "bạn bè"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "star",
+        "answers": [
+            "cửa sổ",
+            "ngôi sao",
+            "điện thoại",
+            "đứa trẻ"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "man",
+        "answers": [
+            "người đàn ông",
+            "âm nhạc",
+            "điện thoại",
+            "quả chuối"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "woman",
+        "answers": [
+            "cửa sổ",
+            "con tàu",
+            "người phụ nữ",
+            "đất nước"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "child",
+        "answers": [
+            "mặt trời",
+            "quả táo",
+            "đứa trẻ",
+            "điện thoại"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "friend",
+        "answers": [
+            "con đường",
+            "đồ uống",
+            "học sinh",
+            "bạn bè"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "school",
+        "answers": [
+            "trường học",
+            "ngôi sao",
+            "con cá",
+            "quả lê"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "teacher",
+        "answers": [
+            "giáo viên",
+            "cánh cửa",
+            "nước",
+            "cái bàn"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "student",
+        "answers": [
+            "con chim",
+            "con tàu",
+            "học sinh",
+            "cái bàn"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "food",
+        "answers": [
+            "thức ăn",
+            "cây bút",
+            "máy tính",
+            "quyển sách"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "drink",
+        "answers": [
+            "quyển sách",
+            "đồ uống",
+            "con đường",
+            "bông hoa"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "music",
+        "answers": [
+            "con chim",
+            "âm nhạc",
+            "đứa trẻ",
+            "quả chuối"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "song",
+        "answers": [
+            "bài hát",
+            "quả chuối",
+            "quả cam",
+            "cửa sổ"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "city",
+        "answers": [
+            "mặt trăng",
+            "thành phố",
+            "máy tính",
+            "con cá"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "village",
+        "answers": [
+            "nước",
+            "bài hát",
+            "ngôi làng",
+            "cửa sổ"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "country",
+        "answers": [
+            "tuyết",
+            "nước",
+            "đất nước",
+            "mặt trăng"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "river",
+        "answers": [
+            "ngôi nhà",
+            "đất nước",
+            "dòng sông",
+            "thành phố"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "mountain",
+        "answers": [
+            "ngọn núi",
+            "cái cây",
+            "trường học",
+            "quả táo"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "sea",
+        "answers": [
+            "xe hơi",
+            "biển",
+            "con cá",
+            "quả táo"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "sky",
+        "answers": [
+            "bông hoa",
+            "bầu trời",
+            "mặt trăng",
+            "đồ uống"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "rain",
+        "answers": [
+            "dòng sông",
+            "con mèo",
+            "bầu trời",
+            "mưa"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "snow",
+        "answers": [
+            "tuyết",
+            "người phụ nữ",
+            "cái cây",
+            "con chó"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "wind",
+        "answers": [
+            "người phụ nữ",
+            "người đàn ông",
+            "gió",
+            "ngôi sao"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "road",
+        "answers": [
+            "lửa",
+            "quyển sách",
+            "con đường",
+            "máy bay"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "street",
+        "answers": [
+            "đất nước",
+            "con tàu",
+            "đường phố",
+            "ngọn núi"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "train",
+        "answers": [
+            "tàu hỏa",
+            "đường phố",
+            "cây bút",
+            "ngôi làng"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "plane",
+        "answers": [
+            "mặt trời",
+            "ngôi nhà",
+            "dòng sông",
+            "máy bay"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "ship",
+        "answers": [
+            "con chim",
+            "trường học",
+            "máy bay",
+            "con tàu"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "chair",
+        "answers": [
+            "máy bay",
+            "quả cam",
+            "cái ghế",
+            "bông hoa"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "table",
+        "answers": [
+            "xe hơi",
+            "bông hoa",
+            "cái bàn",
+            "bài hát"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "door",
+        "answers": [
+            "trường học",
+            "ngôi sao",
+            "cánh cửa",
+            "con đường"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "window",
+        "answers": [
+            "biển",
+            "bông hoa",
+            "cửa sổ",
+            "âm nhạc"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "apple",
+        "answers": [
+            "người phụ nữ",
+            "quả lê",
+            "ngôi làng",
+            "quả táo"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "banana",
+        "answers": [
+            "con tàu",
+            "con chó",
+            "âm nhạc",
+            "quả chuối"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "orange",
+        "answers": [
+            "bầu trời",
+            "quyển sách",
+            "giáo viên",
+            "quả cam"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "pear",
+        "answers": [
+            "máy tính",
+            "thức ăn",
+            "quyển sách",
+            "quả lê"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "dog",
+        "answers": [
+            "đất nước",
+            "máy bay",
+            "nước",
+            "con chó"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "cat",
+        "answers": [
+            "học sinh",
+            "cửa sổ",
+            "máy bay",
+            "con mèo"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "bird",
+        "answers": [
+            "học sinh",
+            "điện thoại",
+            "mặt trời",
+            "con chim"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "fish",
+        "answers": [
+            "bài hát",
+            "con cá",
+            "ngôi nhà",
+            "máy tính"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "house",
+        "answers": [
+            "cái bàn",
+            "cái ghế",
+            "con chó",
+            "ngôi nhà"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "car",
+        "answers": [
+            "ngôi nhà",
+            "máy bay",
+            "ngọn núi",
+            "xe hơi"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "book",
+        "answers": [
+            "thức ăn",
+            "quyển sách",
+            "quả cam",
+            "cánh cửa"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "pen",
+        "answers": [
+            "quả táo",
+            "cây bút",
+            "người phụ nữ",
+            "tuyết"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "computer",
+        "answers": [
+            "máy tính",
+            "người đàn ông",
+            "ngôi nhà",
+            "con chó"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "phone",
+        "answers": [
+            "mặt trăng",
+            "điện thoại",
+            "thức ăn",
+            "con chim"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "water",
+        "answers": [
+            "cửa sổ",
+            "nước",
+            "bạn bè",
+            "tuyết"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "fire",
+        "answers": [
+            "học sinh",
+            "lửa",
+            "ngôi làng",
+            "con đường"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "tree",
+        "answers": [
+            "người phụ nữ",
+            "đất nước",
+            "quả lê",
+            "cái cây"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "flower",
+        "answers": [
+            "bông hoa",
+            "mặt trời",
+            "lửa",
+            "âm nhạc"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "sun",
+        "answers": [
+            "tàu hỏa",
+            "mặt trời",
+            "người phụ nữ",
+            "cái cây"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "moon",
+        "answers": [
+            "xe hơi",
+            "thành phố",
+            "mặt trăng",
+            "đất nước"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "star",
+        "answers": [
+            "trường học",
+            "học sinh",
+            "cái cây",
+            "ngôi sao"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "man",
+        "answers": [
+            "máy tính",
+            "người đàn ông",
+            "ngôi làng",
+            "bài hát"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "woman",
+        "answers": [
+            "điện thoại",
+            "biển",
+            "ngọn núi",
+            "người phụ nữ"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "child",
+        "answers": [
+            "đứa trẻ",
+            "ngọn núi",
+            "âm nhạc",
+            "đường phố"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "friend",
+        "answers": [
+            "đồ uống",
+            "bạn bè",
+            "giáo viên",
+            "cánh cửa"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "school",
+        "answers": [
+            "mặt trăng",
+            "trường học",
+            "máy bay",
+            "con mèo"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "teacher",
+        "answers": [
+            "đứa trẻ",
+            "giáo viên",
+            "mưa",
+            "ngôi sao"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "student",
+        "answers": [
+            "bông hoa",
+            "học sinh",
+            "người phụ nữ",
+            "biển"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "food",
+        "answers": [
+            "thức ăn",
+            "đường phố",
+            "cây bút",
+            "quả táo"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "drink",
+        "answers": [
+            "con tàu",
+            "bầu trời",
+            "đồ uống",
+            "đứa trẻ"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "music",
+        "answers": [
+            "thức ăn",
+            "quả táo",
+            "âm nhạc",
+            "ngôi sao"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "song",
+        "answers": [
+            "bông hoa",
+            "biển",
+            "bài hát",
+            "thành phố"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "city",
+        "answers": [
+            "thành phố",
+            "dòng sông",
+            "ngôi làng",
+            "đứa trẻ"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "village",
+        "answers": [
+            "con chim",
+            "ngôi làng",
+            "thức ăn",
+            "đường phố"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "country",
+        "answers": [
+            "quả táo",
+            "đất nước",
+            "lửa",
+            "người đàn ông"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "river",
+        "answers": [
+            "mặt trăng",
+            "đất nước",
+            "dòng sông",
+            "quả lê"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "mountain",
+        "answers": [
+            "ngọn núi",
+            "ngôi nhà",
+            "gió",
+            "bông hoa"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "sea",
+        "answers": [
+            "nước",
+            "con đường",
+            "gió",
+            "biển"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "sky",
+        "answers": [
+            "bầu trời",
+            "bài hát",
+            "đường phố",
+            "ngọn núi"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "rain",
+        "answers": [
+            "quả táo",
+            "thức ăn",
+            "mưa",
+            "mặt trăng"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "snow",
+        "answers": [
+            "âm nhạc",
+            "thức ăn",
+            "đứa trẻ",
+            "tuyết"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "wind",
+        "answers": [
+            "gió",
+            "bạn bè",
+            "con chó",
+            "tuyết"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "road",
+        "answers": [
+            "con tàu",
+            "cây bút",
+            "con đường",
+            "đường phố"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "street",
+        "answers": [
+            "dòng sông",
+            "điện thoại",
+            "đường phố",
+            "tàu hỏa"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "train",
+        "answers": [
+            "tàu hỏa",
+            "bạn bè",
+            "mặt trăng",
+            "cây bút"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "plane",
+        "answers": [
+            "quả cam",
+            "máy bay",
+            "quả chuối",
+            "đường phố"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "ship",
+        "answers": [
+            "con tàu",
+            "quả táo",
+            "đứa trẻ",
+            "điện thoại"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "chair",
+        "answers": [
+            "con cá",
+            "cái ghế",
+            "bài hát",
+            "giáo viên"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "table",
+        "answers": [
+            "cánh cửa",
+            "cái bàn",
+            "con chim",
+            "đứa trẻ"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "door",
+        "answers": [
+            "cánh cửa",
+            "máy bay",
+            "bài hát",
+            "quả táo"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "window",
+        "answers": [
+            "quả cam",
+            "cửa sổ",
+            "con chó",
+            "đứa trẻ"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "apple",
+        "answers": [
+            "điện thoại",
+            "quả táo",
+            "quả chuối",
+            "người đàn ông"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "banana",
+        "answers": [
+            "quả chuối",
+            "xe hơi",
+            "thành phố",
+            "trường học"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "orange",
+        "answers": [
+            "người phụ nữ",
+            "quả cam",
+            "cửa sổ",
+            "con cá"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "pear",
+        "answers": [
+            "quyển sách",
+            "bầu trời",
+            "gió",
+            "quả lê"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "dog",
+        "answers": [
+            "cái ghế",
+            "con chó",
+            "đứa trẻ",
+            "cái cây"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "cat",
+        "answers": [
+            "con mèo",
+            "cửa sổ",
+            "lửa",
+            "con chim"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "bird",
+        "answers": [
+            "giáo viên",
+            "mặt trăng",
+            "con chim",
+            "âm nhạc"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "fish",
+        "answers": [
+            "con cá",
+            "trường học",
+            "đường phố",
+            "quả cam"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "house",
+        "answers": [
+            "người đàn ông",
+            "học sinh",
+            "ngôi nhà",
+            "máy bay"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "car",
+        "answers": [
+            "máy bay",
+            "xe hơi",
+            "người đàn ông",
+            "quả chuối"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "book",
+        "answers": [
+            "ngôi nhà",
+            "thức ăn",
+            "đường phố",
+            "quyển sách"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "pen",
+        "answers": [
+            "học sinh",
+            "ngọn núi",
+            "thành phố",
+            "cây bút"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "computer",
+        "answers": [
+            "máy bay",
+            "con đường",
+            "máy tính",
+            "quả cam"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "phone",
+        "answers": [
+            "điện thoại",
+            "người đàn ông",
+            "quả táo",
+            "học sinh"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "water",
+        "answers": [
+            "ngôi sao",
+            "nước",
+            "ngôi làng",
+            "trường học"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "fire",
+        "answers": [
+            "xe hơi",
+            "cánh cửa",
+            "nước",
+            "lửa"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "tree",
+        "answers": [
+            "cái cây",
+            "người đàn ông",
+            "điện thoại",
+            "thành phố"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "flower",
+        "answers": [
+            "bông hoa",
+            "giáo viên",
+            "người phụ nữ",
+            "mặt trăng"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "sun",
+        "answers": [
+            "con chim",
+            "ngôi làng",
+            "mặt trời",
+            "người phụ nữ"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "moon",
+        "answers": [
+            "mặt trăng",
+            "con mèo",
+            "nước",
+            "máy tính"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "star",
+        "answers": [
+            "ngọn núi",
+            "dòng sông",
+            "ngôi sao",
+            "bạn bè"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "man",
+        "answers": [
+            "người đàn ông",
+            "xe hơi",
+            "lửa",
+            "con chim"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "woman",
+        "answers": [
+            "quả chuối",
+            "bài hát",
+            "người phụ nữ",
+            "mặt trăng"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "child",
+        "answers": [
+            "ngôi nhà",
+            "đứa trẻ",
+            "mưa",
+            "người phụ nữ"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "friend",
+        "answers": [
+            "quả lê",
+            "bạn bè",
+            "ngôi nhà",
+            "nước"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "school",
+        "answers": [
+            "dòng sông",
+            "học sinh",
+            "gió",
+            "trường học"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "teacher",
+        "answers": [
+            "cây bút",
+            "giáo viên",
+            "đứa trẻ",
+            "quả chuối"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "student",
+        "answers": [
+            "học sinh",
+            "con chim",
+            "con tàu",
+            "con đường"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "food",
+        "answers": [
+            "bông hoa",
+            "quả chuối",
+            "thức ăn",
+            "bầu trời"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "drink",
+        "answers": [
+            "quả táo",
+            "thức ăn",
+            "đồ uống",
+            "âm nhạc"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "music",
+        "answers": [
+            "âm nhạc",
+            "dòng sông",
+            "bông hoa",
+            "mặt trăng"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "song",
+        "answers": [
+            "trường học",
+            "máy bay",
+            "lửa",
+            "bài hát"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "city",
+        "answers": [
+            "đất nước",
+            "thành phố",
+            "thức ăn",
+            "đồ uống"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "village",
+        "answers": [
+            "ngôi làng",
+            "học sinh",
+            "cái bàn",
+            "gió"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "country",
+        "answers": [
+            "cái bàn",
+            "đường phố",
+            "đất nước",
+            "cái cây"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "river",
+        "answers": [
+            "con chó",
+            "ngọn núi",
+            "dòng sông",
+            "mặt trăng"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "mountain",
+        "answers": [
+            "mưa",
+            "ngọn núi",
+            "bông hoa",
+            "âm nhạc"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "sea",
+        "answers": [
+            "biển",
+            "thức ăn",
+            "gió",
+            "đứa trẻ"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "sky",
+        "answers": [
+            "gió",
+            "con tàu",
+            "mưa",
+            "bầu trời"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "rain",
+        "answers": [
+            "mưa",
+            "con cá",
+            "đứa trẻ",
+            "người phụ nữ"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "snow",
+        "answers": [
+            "tuyết",
+            "bài hát",
+            "thức ăn",
+            "ngọn núi"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "wind",
+        "answers": [
+            "bạn bè",
+            "ngôi sao",
+            "gió",
+            "cửa sổ"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "road",
+        "answers": [
+            "mặt trời",
+            "quyển sách",
+            "con chó",
+            "con đường"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "street",
+        "answers": [
+            "xe hơi",
+            "đường phố",
+            "đất nước",
+            "quả chuối"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "train",
+        "answers": [
+            "cánh cửa",
+            "tàu hỏa",
+            "tuyết",
+            "mặt trăng"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "plane",
+        "answers": [
+            "cửa sổ",
+            "máy bay",
+            "bài hát",
+            "đất nước"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "ship",
+        "answers": [
+            "con tàu",
+            "quả táo",
+            "quả cam",
+            "con chó"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "chair",
+        "answers": [
+            "con tàu",
+            "nước",
+            "âm nhạc",
+            "cái ghế"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "table",
+        "answers": [
+            "máy bay",
+            "lửa",
+            "cái bàn",
+            "nước"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "door",
+        "answers": [
+            "con chó",
+            "quả cam",
+            "cánh cửa",
+            "con mèo"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "window",
+        "answers": [
+            "đường phố",
+            "nước",
+            "ngôi nhà",
+            "cửa sổ"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "apple",
+        "answers": [
+            "ngôi sao",
+            "quả táo",
+            "lửa",
+            "ngôi nhà"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "banana",
+        "answers": [
+            "âm nhạc",
+            "đứa trẻ",
+            "ngôi làng",
+            "quả chuối"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "orange",
+        "answers": [
+            "cái ghế",
+            "quả táo",
+            "quả cam",
+            "con tàu"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "pear",
+        "answers": [
+            "quả lê",
+            "đồ uống",
+            "con chó",
+            "con chim"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "dog",
+        "answers": [
+            "cửa sổ",
+            "con chó",
+            "mặt trăng",
+            "con chim"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "cat",
+        "answers": [
+            "con mèo",
+            "cây bút",
+            "đất nước",
+            "người đàn ông"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "bird",
+        "answers": [
+            "đồ uống",
+            "con chim",
+            "con cá",
+            "cái cây"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "fish",
+        "answers": [
+            "con cá",
+            "âm nhạc",
+            "biển",
+            "dòng sông"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "house",
+        "answers": [
+            "ngôi nhà",
+            "máy tính",
+            "giáo viên",
+            "bạn bè"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "car",
+        "answers": [
+            "xe hơi",
+            "điện thoại",
+            "con cá",
+            "gió"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "book",
+        "answers": [
+            "xe hơi",
+            "quyển sách",
+            "cái bàn",
+            "người phụ nữ"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "pen",
+        "answers": [
+            "mưa",
+            "trường học",
+            "bầu trời",
+            "cây bút"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "computer",
+        "answers": [
+            "ngọn núi",
+            "máy tính",
+            "tuyết",
+            "ngôi sao"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "phone",
+        "answers": [
+            "điện thoại",
+            "bài hát",
+            "nước",
+            "tàu hỏa"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "water",
+        "answers": [
+            "bài hát",
+            "nước",
+            "thức ăn",
+            "con đường"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "fire",
+        "answers": [
+            "nước",
+            "ngôi sao",
+            "trường học",
+            "lửa"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "tree",
+        "answers": [
+            "đường phố",
+            "quyển sách",
+            "cái cây",
+            "bông hoa"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "flower",
+        "answers": [
+            "đường phố",
+            "bông hoa",
+            "xe hơi",
+            "ngọn núi"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "sun",
+        "answers": [
+            "thành phố",
+            "mặt trời",
+            "quyển sách",
+            "máy bay"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "moon",
+        "answers": [
+            "cánh cửa",
+            "âm nhạc",
+            "con tàu",
+            "mặt trăng"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "star",
+        "answers": [
+            "giáo viên",
+            "thức ăn",
+            "ngôi sao",
+            "mặt trời"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "man",
+        "answers": [
+            "quả cam",
+            "người đàn ông",
+            "ngôi nhà",
+            "đất nước"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "woman",
+        "answers": [
+            "con cá",
+            "cánh cửa",
+            "người phụ nữ",
+            "đường phố"
+        ],
+        "correct": 2
+    },
+    {
+        "en": "child",
+        "answers": [
+            "đứa trẻ",
+            "máy bay",
+            "ngọn núi",
+            "con chó"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "friend",
+        "answers": [
+            "ngọn núi",
+            "bạn bè",
+            "dòng sông",
+            "tàu hỏa"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "school",
+        "answers": [
+            "tàu hỏa",
+            "trường học",
+            "ngôi sao",
+            "con cá"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "teacher",
+        "answers": [
+            "ngôi sao",
+            "giáo viên",
+            "xe hơi",
+            "thức ăn"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "student",
+        "answers": [
+            "giáo viên",
+            "học sinh",
+            "đường phố",
+            "quyển sách"
+        ],
+        "correct": 1
+    },
+    {
+        "en": "food",
+        "answers": [
+            "thức ăn",
+            "cái ghế",
+            "học sinh",
+            "mặt trăng"
+        ],
+        "correct": 0
+    },
+    {
+        "en": "drink",
+        "answers": [
+            "máy bay",
+            "ngọn núi",
+            "quyển sách",
+            "đồ uống"
+        ],
+        "correct": 3
+    },
+    {
+        "en": "music",
+        "answers": [
+            "giáo viên",
+            "ngôi nhà",
+            "âm nhạc",
+            "mưa"
+        ],
+        "correct": 2
+    }
+];
+        localStorage.setItem("wordList", JSON.stringify(word));
+    }
+
+    let words = JSON.parse(localStorage.getItem("wordList"))
+
+    function save() {
+        localStorage.setItem("wordList", JSON.stringify(words));
+    }
+
+    function loadWord() {
+        let q = words[Math.floor(Math.random() * words.length)];
+        document.getElementById("word").textContent = q.en;
+        let answersDiv = document.getElementById("answers");
+        answersDiv.innerHTML = "";
+        q.answers.forEach((ans, i) => {
+            let div = document.createElement("div");
+            div.className = "answer";
+            div.textContent = ans;
+            div.onclick = () => {
+                if (i === q.correct) div.classList.add("correct");
+                else div.classList.add("wrong");
+            };
+            answersDiv.appendChild(div);
+        });
+    }
+
+    function addWord() {
+        let en = document.getElementById("en").value;
+        let a = document.getElementById("a").value;
+        let b = document.getElementById("b").value;
+        let c = document.getElementById("c").value;
+        let d = document.getElementById("d").value;
+        if (!en || !a || !b || !c || !d) return alert("Nhập đầy đủ!");
+        words.push({ en: en, answers: [a, b, c, d], correct: 0 });
+        save();
+        alert("Đã thêm!");
+    }
+
+    loadWord();
+</script>
 
 </body>
 </html>
