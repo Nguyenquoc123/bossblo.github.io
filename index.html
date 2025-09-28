@@ -256,15 +256,15 @@
   <div id="score">Điểm: 0</div>
 
   <!-- Bộ lọc -->
-  <!-- Filter -->
   <div id="filter">
     <label>Nhóm:</label>
     <select id="groupSelect"></select>
     <label>Cấp độ:</label>
     <select id="levelSelect"></select>
+    <label>Lesson:</label>
+    <select id="lessonSelect"></select>
     <button onclick="startQuiz()">Bắt đầu</button>
   </div>
-
 
   <!-- Quiz -->
   <div id="quiz">
@@ -285,7 +285,8 @@
   <form id="addForm">
     <h3>➕ Thêm câu hỏi</h3>
     <select id="addGroup"></select>
-    <select id="addLevel"></select><br>
+    <select id="addLevel"></select>
+    <select id="addLesson"></select><br>
     <input type="url" id="imageUrl" placeholder="Link ảnh online" required><br>
     <input type="url" id="audioUrl" placeholder="Link audio (tùy chọn)"><br>
     <input type="text" id="correct" placeholder="Đáp án đúng" required><br>
@@ -302,15 +303,32 @@
   </div>
 
   <script>
-
-    function startQuiz() {
-      score = 0;   // chỉ reset khi bắt đầu
-      scoreDiv.textContent = "Điểm: " + score;
-      loadRandomQuestion();  // load câu hỏi đầu tiên
+    // Sinh Lesson 1-60
+    function generateLessons() {
+      let lessons = [];
+      for (let i = 1; i <= 60; i++) lessons.push("Lesson " + i);
+      return lessons;
     }
+
+    // Cấu trúc dữ liệu levels
     const levels = {
-      Cambridge: ["Starter", "Mover", "Flyer", "KET", "PET", "FCE"],
-      School: ["Lớp 1", "Lớp 2", "Lớp 3", "Lớp 4", "Lớp 5", "Lớp 6", "Lớp 7"]
+      Cambridge: {
+        Starter: generateLessons(),
+        Mover: generateLessons(),
+        Flyer: generateLessons(),
+        KET: generateLessons(),
+        PET: generateLessons(),
+        FCE: generateLessons()
+      },
+      School: {
+        "Lớp 1": generateLessons(),
+        "Lớp 2": generateLessons(),
+        "Lớp 3": generateLessons(),
+        "Lớp 4": generateLessons(),
+        "Lớp 5": generateLessons(),
+        "Lớp 6": generateLessons(),
+        "Lớp 7": generateLessons()
+      }
     };
 
     let savedQ = localStorage.getItem("questions");
@@ -321,7 +339,8 @@
         wrong: ["Dog", "Bird", "Fish"],
         audio: "https://dictionary.cambridge.org/media/english/uk_pron/u/ukc/ukcaz/ukcazzz021.mp3",
         group: "Cambridge",
-        level: "Starter"
+        level: "Starter",
+        lesson: "Lesson 1"
       }
     ];
     let score = 0;
@@ -333,45 +352,68 @@
     const audioBtn = document.getElementById("audioBtn");
     const groupSelect = document.getElementById("groupSelect");
     const levelSelect = document.getElementById("levelSelect");
+    const lessonSelect = document.getElementById("lessonSelect");
     const addGroup = document.getElementById("addGroup");
     const addLevel = document.getElementById("addLevel");
+    const addLesson = document.getElementById("addLesson");
     const listDiv = document.getElementById("list");
 
+    // Điền Group -> Level -> Lesson
     function fillSelects() {
       [groupSelect, addGroup].forEach(sel => {
         sel.innerHTML = "";
         Object.keys(levels).forEach(gr => {
           let opt = document.createElement("option");
-          opt.value = gr; opt.textContent = gr;
+          opt.value = gr;
+          opt.textContent = gr;
           sel.appendChild(opt);
         });
       });
-      updateLevelSelect(groupSelect, levelSelect);
-      updateLevelSelect(addGroup, addLevel);
+      updateLevelSelect(groupSelect, levelSelect, lessonSelect);
+      updateLevelSelect(addGroup, addLevel, addLesson);
     }
-    function updateLevelSelect(groupEl, levelEl) {
+
+    function updateLevelSelect(groupEl, levelEl, lessonEl) {
       levelEl.innerHTML = "";
-      levels[groupEl.value].forEach(lv => {
+      Object.keys(levels[groupEl.value]).forEach(lv => {
         let opt = document.createElement("option");
-        opt.value = lv; opt.textContent = lv;
+        opt.value = lv;
+        opt.textContent = lv;
         levelEl.appendChild(opt);
       });
+      updateLessonSelect(groupEl.value, levelEl.value, lessonEl);
     }
-    groupSelect.onchange = () => updateLevelSelect(groupSelect, levelSelect);
-    addGroup.onchange = () => updateLevelSelect(addGroup, addLevel);
+
+    function updateLessonSelect(group, level, lessonEl) {
+      lessonEl.innerHTML = "";
+      levels[group][level].forEach(ls => {
+        let opt = document.createElement("option");
+        opt.value = ls;
+        opt.textContent = ls;
+        lessonEl.appendChild(opt);
+      });
+    }
+
+    groupSelect.onchange = () => updateLevelSelect(groupSelect, levelSelect, lessonSelect);
+    addGroup.onchange = () => updateLevelSelect(addGroup, addLevel, addLesson);
+    levelSelect.onchange = () => updateLessonSelect(groupSelect.value, levelSelect.value, lessonSelect);
+    addLevel.onchange = () => updateLessonSelect(addGroup.value, addLevel.value, addLesson);
 
     function saveQuestions() { localStorage.setItem("questions", JSON.stringify(questions)); renderList(); }
 
-    function loadRandomQuestion() {
-      // Reset điểm khi nhấn bắt đầu
-      // score = 0;
+    function startQuiz() {
+      score = 0;
       scoreDiv.textContent = "Điểm: " + score;
+      loadRandomQuestion();
+    }
 
-      let group = groupSelect.value, level = levelSelect.value;
-      let filtered = questions.filter(q => q.group === group && q.level === level);
+    function loadRandomQuestion() {
+      let group = groupSelect.value, level = levelSelect.value, lesson = lessonSelect.value;
+      let filtered = questions.filter(q => q.group === group && q.level === level && q.lesson === lesson);
       if (!filtered.length) { optionsDiv.innerHTML = "❌ Chưa có câu hỏi!"; return; }
       let q = filtered[Math.floor(Math.random() * filtered.length)];
-      image.src = q.img; wordDiv.textContent = q.correct;
+      image.src = q.img;
+      wordDiv.textContent = q.correct;
       audioBtn.innerHTML = q.audio ? "🔊" : "";
       if (q.audio) audioBtn.onclick = () => new Audio(q.audio).play();
 
@@ -385,11 +427,9 @@
         b.onclick = () => {
           if (opt === q.correct) {
             score += 10;
-            // alert("🎉 Chính xác! +10 điểm");
             showToast("🎉 Chính xác! +10 điểm", "success");
           } else {
             score = Math.max(0, score - 5);
-            // alert("😢 Sai rồi! -5 điểm");
             showToast("😢 Sai rồi! -5 điểm", "error");
           }
           scoreDiv.textContent = "Điểm: " + score;
@@ -406,9 +446,13 @@
         audio: document.getElementById("audioUrl").value,
         correct: document.getElementById("correct").value,
         wrong: [wrong1.value, wrong2.value, wrong3.value],
-        group: addGroup.value, level: addLevel.value
+        group: addGroup.value,
+        level: addLevel.value,
+        lesson: addLesson.value
       };
-      questions.push(newQ); saveQuestions(); e.target.reset();
+      questions.push(newQ);
+      saveQuestions();
+      e.target.reset();
       toggleForm(false);
     };
 
@@ -417,7 +461,7 @@
       questions.forEach((q, i) => {
         let d = document.createElement("div");
         d.className = "item";
-        d.innerHTML = `<span>[${q.group}-${q.level}] ${q.correct}</span>
+        d.innerHTML = `<span>[${q.group}-${q.level}-${q.lesson}] ${q.correct}</span>
           <div><button class="deleteBtn" onclick="deleteQuestion(${i})">Xóa</button></div>`;
         listDiv.appendChild(d);
       });
@@ -435,10 +479,6 @@
       document.getElementById("addForm").style.display = "none";
     }
 
-    fillSelects();
-    scoreDiv.textContent = "Điểm: " + score;
-    renderList();
-
     function showToast(message, type = "success") {
       let toast = document.getElementById("toast");
       toast.className = "show " + type;
@@ -446,9 +486,9 @@
       setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 2000);
     }
 
+    fillSelects();
+    renderList();
   </script>
   <div id="toast"></div>
-
 </body>
-
 </html>
